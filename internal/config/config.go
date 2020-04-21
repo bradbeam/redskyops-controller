@@ -25,6 +25,7 @@ import (
 	"net/http"
 	"net/url"
 	"os/exec"
+	"path"
 	"strings"
 
 	"github.com/lestrrat-go/jwx/jwk"
@@ -174,7 +175,7 @@ func (ep Endpoints) Resolve(endpoint string) *url.URL {
 	for k, v := range ep {
 		if strings.HasPrefix(endpoint, k) {
 			u := *v
-			u.Path = u.Path + strings.TrimPrefix(endpoint, k)
+			u.Path = path.Clean(path.Join(u.Path, endpoint))
 			return &u
 		}
 	}
