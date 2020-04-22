@@ -17,6 +17,7 @@ limitations under the License.
 package config
 
 import (
+	"fmt"
 	"net/url"
 	"path"
 	"testing"
@@ -42,7 +43,6 @@ func TestRedSkyConfig_Endpoints(t *testing.T) {
 	cases := []struct {
 		desc     string
 		endpoint string
-		expected []string
 	}{
 		{
 			desc:     "default",
@@ -77,6 +77,127 @@ func TestRedSkyConfig_Endpoints(t *testing.T) {
 
 				assert.Equal(t, u.String(), ep.Resolve(testEp).String())
 			}
+		})
+	}
+}
+
+func TestRedSkyConfig_Load(t *testing.T) {
+	defaultConfig := &RedSkyConfig{}
+	err := defaultConfig.Load()
+	assert.NoError(t, err)
+
+	doNothingLoader := func(cfg *RedSkyConfig) error {
+		return nil
+	}
+	errLoader := func(cfg *RedSkyConfig) error {
+		return fmt.Errorf("expected error")
+	}
+
+	changedConfig := &RedSkyConfig{
+		Filename: "yolo",
+	}
+	err = changedConfig.Load()
+	assert.NoError(t, err)
+
+	changedLoader := func(cfg *RedSkyConfig) error {
+		cfg.Filename = "yolo"
+		return nil
+	}
+
+	cases := []struct {
+		desc          string
+		loaders       []Loader
+		cfg           *RedSkyConfig
+		expectedError bool
+	}{
+		{
+			desc:          "no_extras",
+			loaders:       []Loader{},
+			cfg:           defaultConfig,
+			expectedError: false,
+		},
+		{
+			desc: "simple",
+			loaders: []Loader{
+				doNothingLoader,
+			},
+			cfg:           defaultConfig,
+			expectedError: false,
+		},
+		{
+			desc: "error",
+			loaders: []Loader{
+				doNothingLoader,
+				errLoader,
+			},
+			cfg:           defaultConfig,
+			expectedError: true,
+		},
+		{
+			desc: "changed",
+			loaders: []Loader{
+				changedLoader,
+			},
+			cfg:           changedConfig,
+			expectedError: false,
+		},
+	}
+
+	for _, c := range cases {
+		t.Run(c.desc, func(t *testing.T) {
+			cfg := &RedSkyConfig{}
+			err := cfg.Load(c.loaders...)
+			if c.expectedError {
+				assert.Error(t, err)
+				return
+			}
+
+			assert.NoError(t, err)
+			assert.Equal(t, c.cfg, cfg)
+		})
+	}
+}
+
+func TestRedSkyConfig_Update(t *testing.T) {
+	defaultConfig := &RedSkyConfig{}
+	err := defaultConfig.Load()
+	assert.NoError(t, err)
+
+	doNothingChange := func(cfg *Config) error {
+		return nil
+	}
+
+	errChange := func(cfg *Config) error {
+		return fmt.Errorf("expected error")
+	}
+
+	cases := []struct {
+		desc          string
+		change        Change
+		expectedError bool
+	}{
+		{
+			desc:          "no_change",
+			change:        doNothingChange,
+			expectedError: false,
+		},
+		{
+			desc:          "err_change",
+			change:        errChange,
+			expectedError: true,
+		},
+	}
+
+	for _, c := range cases {
+		t.Run(c.desc, func(t *testing.T) {
+			cfg := &RedSkyConfig{}
+			err = cfg.Update(c.change)
+			if c.expectedError {
+				assert.Error(t, err)
+				return
+			}
+			assert.NoError(t, err)
+			assert.Len(t, cfg.unpersisted, 1)
 		})
 	}
 }
