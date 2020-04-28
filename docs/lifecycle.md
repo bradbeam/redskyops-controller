@@ -47,3 +47,7 @@ When using the Enterprise product, the metrics of finished trials are reported b
 ## Setup Deletion
 
 If the trial included setup tasks, a job is scheduled to delete the objects created during setup creation.
+
+## Review
+
+After the trials have run, you can view the aggregate results by running `redskyctl results` and selecting your experiment.

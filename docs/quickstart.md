@@ -29,7 +29,8 @@ $ redskyctl init
 Generally you will want to write your own experiments to run trials on your own applications. For the purposes of this guide we can use the simple example found in the `redskyops-recipes` [repository on GitHub](https://github.com/redskyops/redskyops-recipes/tree/master/simple):
 
 ```sh
-$ kustomize build github.com/redskyops/redskyops-recipes//simple | kubectl apply -f -
+$ git clone https://github.com/redskyops/redskyops-recipes.git
+$ kustomize build redskyops-recipes/simple | kubectl apply -f -
 ```
 
 ## Run a Trial
@@ -39,7 +40,7 @@ With your experiment created, you can be begin running trials by suggesting para
 To interactively create a new trial for the example experiment, run:
 
 ```sh
-$ redskyctl generate trial --interactive -f <(kubectl get experiment simple -o yaml) | kubectl create -f -
+$ redskyctl generate trial --interactive -f <(kubectl get experiment simple-example -o yaml) | kubectl create -f -
 ```
 
 You will be prompted to enter a value for each parameter in the experiment and a new trial will be created. You can monitor the progress using `kubectl`:
@@ -49,6 +50,8 @@ $ kubectl get trials
 ```
 
 When running interactive trials in a single namespace, be sure only trial is active at a time.
+
+After the trial is complete, you will be able to view the parameters and the metrics generated from the trial. The metrics can be used to gauge how effective the used parameters were.
 
 ## Removing the Experiment
 

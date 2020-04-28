@@ -2,13 +2,17 @@
 
 ## Prerequisites
 
-You must have a Kubernetes cluster. Additionally, you will need a local configured copy of `kubectl`. This example requires more resources then the [quick start](quickstart.md) tutorial, therefore you will need something larger then a typical minikube cluster. A four node cluster with 36 total vCPUs (8 on each node) and 64GB total memory (16GB on each node) is generally sufficient.
+* Kubernetes Cluster
+* `kubectl` properly configured
+* [kustomize](https://github.com/kubernetes-sigs/kustomize/releases) (v3.1.0+)
+* [redskyctl](https://github.com/redskyops/redskyops-controller/releases)
+* Red Sky Ops controller running ( `redskyctl init` )
 
-A local install of [Kustomize](https://github.com/kubernetes-sigs/kustomize/releases) (v3.1.0+) is required to manage the objects in you cluster.
-
-Additionally, you will to initialize Red Sky Ops in your cluster. You can download a binary for your platform from the [releases page](https://github.com/redskyops/redskyops-controller/releases) and run `redskyctl init` (while connected to your cluster). For more details, see [the installation guide](install.md).
+This example requires more resources then the [quick start](quickstart.md) tutorial, therefore you will need something larger then a typical minikube cluster. A four node cluster with 32 total vCPUs (8 on each node) and 64GB total memory (16GB on each node) is generally sufficient.
 
 ## Tutorial Resources
+
+######### TODO ########### tutorial does not exist, should this be elasticsearch?
 
 The resources for this tutorial can be found in the [`/tutorial/`](https://github.com/redskyops/redskyops-recipes/tree/master/tutorial) directory of the `redskyops-recipes` repository.
 
@@ -42,9 +46,10 @@ Once assignments have been suggested, a trial run will start generating workload
 Build the experiment resources and apply the configuration to the cluster (note that the example kustomization leverages Kustomize features that may not be available from `kubectl apply -k`):
 
 ```sh
-$ kustomize build github.com/redskyops/redskyops-recipes//tutorial | kubectl apply -f -
+$ git clone https://github.com/redskyops/redskyops-recipes.git
+$ cd redskyops-recipes
+$ kustomize build tutorial | kubectl apply -f -
 ```
-(or, if running this experiment from a locally cloned copy of this repo, you can simply run `kustomize build | kubectl apply -f -`)
 
 When configured to use the Enterprise solution, trials will be created automatically. You may interactively suggest trial assignments to start a trial run as well:
 
@@ -54,7 +59,7 @@ $ redskyctl generate trial --interactive -f <(kubectl get experiment elk -o yaml
 
 ## Monitoring the Experiment
 
-Both `experiments` and `trials` are created as custom Kubernetes objects. You can see a summary of the objects using `kubectl get`; on compatible clusters, trial objects will also display their parameter assignments and (upon completion) observed values.
+Both `experiments` and `trials` are created as custom Kubernetes objects. You can see a summary of the objects using `kubectl get trials,experiments`; on compatible clusters, trial objects will also display their parameter assignments and (upon completion) observed values.
 
 The experiment objects themselves will not have their state modified over the course of a trial run: once created they represent generally static state.
 
@@ -70,10 +75,9 @@ Once an experiment is underway and some trials have completed, you can get the t
 kubectl get trials -l redskyops.dev/experiment=elk
 ```
 
-
 ## Re-running the Experiment
 
-Once a trial run is complete, you can run additional trials using `redskyctl generate trial` (again, this done automatically when using the Enterprise solution).
+Once a trial run is complete, you can run additional trials using `redskyctl generate trial` or if using the Enterprise solution, a new trial will be generated automatically.
 
 The tutorial experiment is not configured to isolate trials to individual namespaces: attempting to run a trial for the tutorial experiment while another tutorial experiment trial is in progress will cause conflicts and lead to inconsistent states.
 
