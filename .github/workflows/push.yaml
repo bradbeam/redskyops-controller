@@ -17,48 +17,11 @@ jobs:
         run: git fetch --depth=1 origin '+refs/tags/*:refs/tags/*'
       - name: Verify Header
         uses: talos-systems/conform@v0.1.0-alpha.19
-      - name: Bootstrap
-        run: |
-          TAG=${GITHUB_SHA:0:8}.${GITHUB_RUN_ID}
-          echo "::set-env name=IMG::gcr.io/redskyops/redskyops-controller:${TAG}"
-          echo "::set-env name=REDSKYCTL_IMG::gcr.io/redskyops/redskyctl:${TAG}"
-          echo "::set-env name=SETUPTOOLS_IMG::gcr.io/redskyops/setuptools:${TAG}"
-          echo "::set-env name=CACHE_IMG::gcr.io/redskyops/redskyops-cache:latest"
-          echo "::set-env name=PULL_POLICY::Always"
-      - name: Build controller
-        run: |
-          make docker-build
-          make docker-push
-          mkdir -p dockercache && docker save $CACHE_IMG -o dockercache/redskycache.tar
-      -
-        name: Prepare
+      - name: Prepare
         id: prepare
         run: |
-          DOCKER_USERNAME=redskyops
-          DOCKER_IMAGE=redskyops/${{ github.event.repository.name }}
-          DOCKER_PLATFORMS=linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64,linux/386,linux/ppc64le,linux/s390x
-          VERSION=snapshot
-          if [[ $GITHUB_REF == refs/tags/* ]]; then
-            VERSION=${GITHUB_REF#refs/tags/v}
-          fi
-          TAGS="--tag ${DOCKER_IMAGE}:${VERSION}"
-          if [[ $VERSION =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
-            TAGS="$TAGS --tag ${DOCKER_IMAGE}:latest"
-          fi
-          echo ::set-output name=docker_username::${DOCKER_USERNAME}
-          echo ::set-output name=docker_image::${DOCKER_IMAGE}
-          echo ::set-output name=version::${VERSION}
-          echo ::set-output name=buildx_args::--platform ${DOCKER_PLATFORMS} \
-            --build-arg VERSION=${VERSION} \
-            --build-arg BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ') \
-            --build-arg VCS_REF=${GITHUB_SHA::8} \
-            ${TAGS} \
-            --file Dockerfile .
-      -
-        # https://github.com/crazy-max/ghaction-docker-buildx
-        name: Set up Docker Buildx
+      - name: Set up Docker Buildx
         uses: crazy-max/ghaction-docker-buildx@v1
-      -
-        name: Docker Buildx (build)
+      - name: Docker Buildx (build)
         run: |
-          docker buildx build --output "type=image,push=false" ${{ steps.prepare.outputs.buildx_args }}
+          make -f Makefile.ci docker-build
