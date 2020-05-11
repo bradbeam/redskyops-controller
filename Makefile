@@ -1,4 +1,3 @@
-
 # Image URL to use all building/pushing image targets
 IMG ?= controller:latest
 REDSKYCTL_IMG ?= redskyctl:latest
@@ -77,8 +76,6 @@ generate: controller-gen
 
 # Build the docker images
 docker-build: test
-	#docker pull ${CACHE_IMG} >/dev/null 2>&1 || :
-	docker import dockercache/redskycache.tar ${CACHE_IMG} 2>&1 || :
 	docker build . -t ${CACHE_IMG} \
 		--target cache \
 		--cache-from=${CACHE_IMG}
