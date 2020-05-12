@@ -51,14 +51,6 @@ vet:
 # Build the docker images
 docker-build:
 	docker buildx build \
-		--target test \
-		--cache-to=type=local,dest=controllercache \
-		--cache-from=type=local,src=controllercache \
-		--platform ${DOCKER_PLATFORMS}   \
-		--build-arg VERSION='${VERSION}' \
-		--output "type=image,push=false" \
-		.
-	docker buildx build \
 		--target builder \
 		--cache-to=type=local,dest=controllercache \
 		--cache-from=type=local,src=controllercache \

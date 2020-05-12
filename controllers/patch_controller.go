@@ -69,8 +69,6 @@ func (r *PatchReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 		return *result, err
 	}
 
-	fmt.Println("yolo")
-
 	return ctrl.Result{}, nil
 }
 
