@@ -19,8 +19,12 @@ COPY controllers/ controllers/
 COPY internal/ internal/
 COPY redskyapi/ redskyapi/
 
+# Test
+FROM base as test
+RUN make test
+
 # Build
-FROM base as builder
+FROM test as builder
 ARG LDFLAGS=""
 RUN CGO_ENABLED=0 GO111MODULE=on go build -ldflags "${LDFLAGS}" -a -o manager main.go
 
@@ -32,6 +36,3 @@ COPY --from=builder /workspace/manager .
 USER nonroot:nonroot
 ENTRYPOINT ["/manager"]
 
-#### Test
-FROM base as test
-RUN make test
