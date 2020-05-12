@@ -52,16 +52,16 @@ vet:
 docker-build:
 	docker buildx build \
 		--target test \
-		--cache-to=type=local,dest=dockercache \
-		--cache-from=type=local,src=dockercache \
+		--cache-to=type=local,dest=controllercache \
+		--cache-from=type=local,src=controllercache \
 		--platform ${DOCKER_PLATFORMS}   \
 		--build-arg VERSION='${VERSION}' \
 		--output "type=image,push=false" \
 		.
 	docker buildx build \
 		--target builder \
-		--cache-to=type=local,dest=dockercache \
-		--cache-from=type=local,src=dockercache \
+		--cache-to=type=local,dest=controllercache \
+		--cache-from=type=local,src=controllercache \
 		--platform ${DOCKER_PLATFORMS}   \
 		--build-arg LDFLAGS='${LDFLAGS}' \
 		--build-arg VERSION='${VERSION}' \
@@ -69,8 +69,8 @@ docker-build:
     --tag ${IMG} \
 		.
 	docker buildx build \
-		--cache-to=type=local,dest=dockercache \
-		--cache-from=type=local,src=dockercache \
+		--cache-to=type=local,dest=toolscache \
+		--cache-from=type=local,src=toolscache \
 		--build-arg VERSION='${VERSION}' \
 		--build-arg IMG='${IMG}'         \
 		--output "type=image,push=false" \

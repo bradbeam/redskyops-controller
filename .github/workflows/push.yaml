@@ -17,13 +17,20 @@ jobs:
         run: git fetch --depth=1 origin '+refs/tags/*:refs/tags/*'
       - name: Verify Header
         uses: talos-systems/conform@v0.1.0-alpha.19
-      - name: Docker Cache
+      - name: Docker Cache (controller)
         uses: actions/cache@v1
         with:
-          path: dockercache
-          key: ${{ runner.os }}-dockercache-${{ hashFiles('**/dockercache') }}
+          path: controllercache
+          key: ${{ runner.os }}-controllercache-${{ hashFiles('**/dockercache') }}
           restore-keys: |
-            ${{ runner.os }}-dockercache-
+            ${{ runner.os }}-controllercache-
+      - name: Docker Cache (tools)
+        uses: actions/cache@v1
+        with:
+          path: toolscache
+          key: ${{ runner.os }}-toolscache-${{ hashFiles('**/toolscache') }}
+          restore-keys: |
+            ${{ runner.os }}-toolscache-
       - name: Set up Docker Buildx
         uses: crazy-max/ghaction-docker-buildx@v1
       - name: Docker Buildx (build)
