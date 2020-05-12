@@ -53,8 +53,8 @@ vet:
 docker-build:
 	docker buildx build \
 		--target builder \
-		--cache-to=type=local,dest=controllercache \
-		--cache-from=type=local,src=controllercache \
+		--cache-to=type=registry,dest=docker.pkg.github.com/bradbeam/controllercache,mode=max \
+		--cache-from=type=registry,src=docker.pkg.github.com/bradbeam/controllercache,mode=max \
 		--platform ${DOCKER_PLATFORMS}   \
 		--build-arg LDFLAGS='${LDFLAGS}' \
 		--build-arg VERSION='${VERSION}' \
@@ -62,8 +62,8 @@ docker-build:
     --tag ${IMG} \
 		.
 	docker buildx build \
-		--cache-to=type=local,dest=toolscache \
-		--cache-from=type=local,src=toolscache \
+		--cache-to=type=registry,dest=docker.pkg.github.com/bradbeam/toolscache,mode=max \
+		--cache-from=type=registry,src=docker.pkg.github.com/bradbeam/toolscache,mode=max \
 		--build-arg VERSION='${VERSION}' \
 		--build-arg IMG='${IMG}'         \
 		--output "type=image,push=false" \
