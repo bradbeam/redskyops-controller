@@ -26,7 +26,7 @@ RUN make test
 # Build
 FROM test as builder
 ARG LDFLAGS=""
-RUN CGO_ENABLED=0 GO111MODULE=on go build -ldflags "${LDFLAGS}" -a -o manager main.go
+RUN CGO_ENABLED=0 go build -ldflags "${LDFLAGS}" -a -o manager main.go
 
 # Use distroless as minimal base image to package the manager binary
 # Refer to https://github.com/GoogleContainerTools/distroless for more details

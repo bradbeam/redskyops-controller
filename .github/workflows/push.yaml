@@ -17,11 +17,18 @@ jobs:
         run: git fetch --depth=1 origin '+refs/tags/*:refs/tags/*'
       - name: Verify Header
         uses: talos-systems/conform@v0.1.0-alpha.19
-      - name: Prepare
-        id: prepare
-        run: |
+      - name: Cache Go Modules
+        uses: actions/cache@v1
+        with:
+          path: dockercache
+          key: ${{ runner.os }}-dockercache-${{ hashFiles('**/dockercache') }}
+          restore-keys: |
+            ${{ runner.os }}-dockercache-
       - name: Set up Docker Buildx
         uses: crazy-max/ghaction-docker-buildx@v1
       - name: Docker Buildx (build)
         run: |
           make -f Makefile.ci docker-build
+      #- name: Docker buildx (push)
+      #  run: |
+      #    make -f Makefile.ci docker-push

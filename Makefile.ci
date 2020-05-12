@@ -52,26 +52,51 @@ vet:
 docker-build:
 	docker buildx build \
 		--target test \
+		--cache-to=type=local,dest=dockercache \
+		--cache-from=type=local,src=dockercache \
 		--platform ${DOCKER_PLATFORMS}   \
 		--build-arg VERSION='${VERSION}' \
 		--output "type=image,push=false" \
 		.
 	docker buildx build \
 		--target builder \
+		--cache-to=type=local,dest=dockercache \
+		--cache-from=type=local,src=dockercache \
 		--platform ${DOCKER_PLATFORMS}   \
 		--build-arg LDFLAGS='${LDFLAGS}' \
 		--build-arg VERSION='${VERSION}' \
 		--output "type=image,push=false" \
+    --tag ${IMG} \
 		.
 	docker buildx build \
+		--cache-to=type=local,dest=dockercache \
+		--cache-from=type=local,src=dockercache \
 		--build-arg VERSION='${VERSION}' \
 		--build-arg IMG='${IMG}'         \
+		--output "type=image,push=false" \
+    --tag ${SETUPTOOLS_IMG} \
 		config
 
 # Push the docker images
 docker-push:
-	docker push ${IMG}
-	docker push ${SETUPTOOLS_IMG}
+	docker buildx build \
+		--target builder \
+		--cache-to=type=local,dest=dockercache \
+		--cache-from=type=local,src=dockercache \
+		--platform ${DOCKER_PLATFORMS}   \
+		--build-arg LDFLAGS='${LDFLAGS}' \
+		--build-arg VERSION='${VERSION}' \
+		--output "type=image,push=true" \
+    --tag ${IMG} \
+		.
+	docker buildx build \
+		--cache-to=type=local,dest=dockercache \
+		--cache-from=type=local,src=dockercache \
+		--build-arg VERSION='${VERSION}' \
+		--build-arg IMG='${IMG}'         \
+		--output "type=image,push=true" \
+    --tag ${SETUPTOOLS_IMG} \
+		config
 
 # Generate CLI and API documentation
 generate-docs:
