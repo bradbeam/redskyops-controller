@@ -21,15 +21,17 @@ jobs:
         uses: actions/cache@v1
         with:
           path: controllercache
-          key: ${{ runner.os }}-controllercache-${{ hashFiles('**/dockercache') }}
+          key: ${{ runner.os }}-controllercache-${{ hashFiles('**.go') }}
           restore-keys: |
+            ${{ runner.os }}-controllercache-${{ hashFiles('**.go') }}
             ${{ runner.os }}-controllercache-
       - name: Docker Cache (tools)
         uses: actions/cache@v1
         with:
           path: toolscache
-          key: ${{ runner.os }}-toolscache-${{ hashFiles('**/toolscache') }}
+          key: ${{ runner.os }}-toolscache-${{ hashFiles('**.go') }}
           restore-keys: |
+            ${{ runner.os }}-toolscache-${{ hashFiles('**.go') }}
             ${{ runner.os }}-toolscache-
       - name: Set up Docker Buildx
         uses: crazy-max/ghaction-docker-buildx@v1
