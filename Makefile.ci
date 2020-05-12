@@ -33,7 +33,8 @@ all: manager tool
 
 # Run tests
 test: fmt vet
-	go test ./... --race -coverprofile cover.out
+	#go test ./... --race -coverprofile cover.out
+	go test ./... -coverprofile cover.out
 
 # Build tool binary using GoReleaser in a local dev environment (in CI we just invoke GoReleaser directly)
 tool:
