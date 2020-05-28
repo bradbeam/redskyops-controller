@@ -13,6 +13,7 @@ GOBIN=$(shell go env GOPATH)/bin
 else
 GOBIN=$(shell go env GOBIN)
 endif
+GOPATH=$(shell go env GOPATH)
 
 # Collect version information
 VERSION ?= $(shell git ls-remote --tags --refs origin 'v*' | tail -1 | awk -F/ '{ print $$3 }')-next
@@ -71,8 +72,15 @@ vet:
 	go vet ./...
 
 # Generate code
-generate: controller-gen
+generate: controller-gen conversion-gen
 	$(CONTROLLER_GEN) object:headerFile="hack/boilerplate.go.txt" paths="./..."
+	# Need to be explicit with GOPATH here, otherwise conversion-gen generates the files with a base path of '.'
+	# handle v1alpha1 conversion generation
+	env GOPATH=${GOPATH} $(CONVERSION_GEN) --skip-unsafe=true --input-dirs ./api/v1alpha1  \
+		--output-file-base=zz_generated.conversion --go-header-file ./hack/boilerplate.go.txt
+	# handle v1beta1 conversion generation
+	#$(CONVERSION_GEN) --skip-unsafe=true --input-dirs ./api/v1beta1 \
+	#	--output-file-base=zz_generated.conversion --go-header-file ./hack/boilerplate.go.txt
 
 # Build the docker images
 docker-build: test docker-build-ci
@@ -104,6 +112,23 @@ ifeq (, $(shell which controller-gen))
 CONTROLLER_GEN=$(GOBIN)/controller-gen
 else
 CONTROLLER_GEN=$(shell which controller-gen)
+endif
+
+# find or download conversion-gen
+# download conversion-gen if necessary
+conversion-gen:
+ifeq (, $(shell which conversion-gen))
+	@{ \
+	set -e ;\
+	CONVERSION_GEN_TMP_DIR=$$(mktemp -d) ;\
+	cd $$CONVERSION_GEN_TMP_DIR ;\
+	go mod init tmp ;\
+	go get k8s.io/code-generator/cmd/conversion-gen@v0.18.3 ;\
+	rm -rf $$CONVERSION_GEN_TMP_DIR ;\
+	}
+CONVERSION_GEN=$(GOBIN)/conversion-gen
+else
+CONVERSION_GEN=$(shell which conversion-gen)
 endif
 
 # Generate CLI and API documentation
