@@ -17,12 +17,13 @@ limitations under the License.
 package experiment
 
 import (
+	"github.com/redskyops/redskyops-controller/internal/hub"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 // PopulateTrialFromTemplate creates a new trial for an experiment
-func PopulateTrialFromTemplate(exp *Experiment, t *trial.Trial) {
+func PopulateTrialFromTemplate(exp *hub.Experiment, t *hub.Trial) {
 	// Start with the trial template
 	exp.Spec.Template.ObjectMeta.DeepCopyInto(&t.ObjectMeta)
 	exp.Spec.Template.Spec.DeepCopyInto(&t.Spec)
@@ -43,7 +44,7 @@ func PopulateTrialFromTemplate(exp *Experiment, t *trial.Trial) {
 	}
 
 	// Record the experiment
-	t.Labels[LabelExperiment] = exp.Name
+	t.Labels[hub.LabelExperiment] = exp.Name
 	t.Spec.ExperimentRef = &corev1.ObjectReference{
 		Name:      exp.Name,
 		Namespace: exp.Namespace,

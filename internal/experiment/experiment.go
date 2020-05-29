@@ -18,6 +18,7 @@ package experiment
 
 import (
 	"github.com/redskyops/redskyops-controller/internal/controller"
+	"github.com/redskyops/redskyops-controller/internal/hub"
 	"github.com/redskyops/redskyops-controller/internal/trial"
 )
 
@@ -46,7 +47,7 @@ const (
 
 // UpdateStatus will ensure the experiment's status matches what is in the supplied trial list; returns true only if
 // changes were necessary
-func UpdateStatus(exp *Experiment, trialList *trial.TrialList) bool {
+func UpdateStatus(exp *hub.Experiment, trialList *hub.TrialList) bool {
 	// Count the active trials
 	activeTrials := int32(0)
 	for i := range trialList.Items {
@@ -79,8 +80,8 @@ func UpdateStatus(exp *Experiment, trialList *trial.TrialList) bool {
 	return false
 }
 
-func summarize(exp *Experiment, activeTrials int32, totalTrials int) string {
-	remote := exp.Annotations[AnnotationExperimentURL] != "" // TODO Or check for the server finalizer?
+func summarize(exp *hub.Experiment, activeTrials int32, totalTrials int) string {
+	remote := exp.Annotations[hub.AnnotationExperimentURL] != "" // TODO Or check for the server finalizer?
 
 	if !exp.GetDeletionTimestamp().IsZero() {
 		return PhaseDeleted
@@ -91,7 +92,7 @@ func summarize(exp *Experiment, activeTrials int32, totalTrials int) string {
 	}
 
 	if exp.Replicas() == 0 {
-		if remote && exp.Annotations[AnnotationNextTrialURL] == "" {
+		if remote && exp.Annotations[hub.AnnotationNextTrialURL] == "" {
 			return PhaseCompleted
 		}
 		return PhasePaused

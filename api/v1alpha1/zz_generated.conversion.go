@@ -21,8 +21,7 @@ limitations under the License.
 package v1alpha1
 
 import (
-	experiment "github.com/redskyops/redskyops-controller/internal/experiment"
-	trial "github.com/redskyops/redskyops-controller/internal/trial"
+	hub "github.com/redskyops/redskyops-controller/internal/hub"
 	v1 "k8s.io/api/core/v1"
 	conversion "k8s.io/apimachinery/pkg/conversion"
 	runtime "k8s.io/apimachinery/pkg/runtime"
@@ -36,347 +35,367 @@ func init() {
 // RegisterConversions adds conversion functions to the given scheme.
 // Public to allow building arbitrary schemes.
 func RegisterConversions(s *runtime.Scheme) error {
-	if err := s.AddGeneratedConversionFunc((*Assignment)(nil), (*trial.Assignment)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_v1alpha1_Assignment_To_trial_Assignment(a.(*Assignment), b.(*trial.Assignment), scope)
+	if err := s.AddGeneratedConversionFunc((*Assignment)(nil), (*hub.Assignment)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1alpha1_Assignment_To_hub_Assignment(a.(*Assignment), b.(*hub.Assignment), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*trial.Assignment)(nil), (*Assignment)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_trial_Assignment_To_v1alpha1_Assignment(a.(*trial.Assignment), b.(*Assignment), scope)
+	if err := s.AddGeneratedConversionFunc((*hub.Assignment)(nil), (*Assignment)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_hub_Assignment_To_v1alpha1_Assignment(a.(*hub.Assignment), b.(*Assignment), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*ConfigMapHelmValuesFromSource)(nil), (*trial.ConfigMapHelmValuesFromSource)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_v1alpha1_ConfigMapHelmValuesFromSource_To_trial_ConfigMapHelmValuesFromSource(a.(*ConfigMapHelmValuesFromSource), b.(*trial.ConfigMapHelmValuesFromSource), scope)
+	if err := s.AddGeneratedConversionFunc((*ConfigMapHelmValuesFromSource)(nil), (*hub.ConfigMapHelmValuesFromSource)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1alpha1_ConfigMapHelmValuesFromSource_To_hub_ConfigMapHelmValuesFromSource(a.(*ConfigMapHelmValuesFromSource), b.(*hub.ConfigMapHelmValuesFromSource), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*trial.ConfigMapHelmValuesFromSource)(nil), (*ConfigMapHelmValuesFromSource)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_trial_ConfigMapHelmValuesFromSource_To_v1alpha1_ConfigMapHelmValuesFromSource(a.(*trial.ConfigMapHelmValuesFromSource), b.(*ConfigMapHelmValuesFromSource), scope)
+	if err := s.AddGeneratedConversionFunc((*hub.ConfigMapHelmValuesFromSource)(nil), (*ConfigMapHelmValuesFromSource)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_hub_ConfigMapHelmValuesFromSource_To_v1alpha1_ConfigMapHelmValuesFromSource(a.(*hub.ConfigMapHelmValuesFromSource), b.(*ConfigMapHelmValuesFromSource), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*Constraint)(nil), (*experiment.Constraint)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_v1alpha1_Constraint_To_experiment_Constraint(a.(*Constraint), b.(*experiment.Constraint), scope)
+	if err := s.AddGeneratedConversionFunc((*Constraint)(nil), (*hub.Constraint)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1alpha1_Constraint_To_hub_Constraint(a.(*Constraint), b.(*hub.Constraint), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*experiment.Constraint)(nil), (*Constraint)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_experiment_Constraint_To_v1alpha1_Constraint(a.(*experiment.Constraint), b.(*Constraint), scope)
+	if err := s.AddGeneratedConversionFunc((*hub.Constraint)(nil), (*Constraint)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_hub_Constraint_To_v1alpha1_Constraint(a.(*hub.Constraint), b.(*Constraint), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*Experiment)(nil), (*experiment.Experiment)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_v1alpha1_Experiment_To_experiment_Experiment(a.(*Experiment), b.(*experiment.Experiment), scope)
+	if err := s.AddGeneratedConversionFunc((*Experiment)(nil), (*hub.Experiment)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1alpha1_Experiment_To_hub_Experiment(a.(*Experiment), b.(*hub.Experiment), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*experiment.Experiment)(nil), (*Experiment)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_experiment_Experiment_To_v1alpha1_Experiment(a.(*experiment.Experiment), b.(*Experiment), scope)
+	if err := s.AddGeneratedConversionFunc((*hub.Experiment)(nil), (*Experiment)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_hub_Experiment_To_v1alpha1_Experiment(a.(*hub.Experiment), b.(*Experiment), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*ExperimentSpec)(nil), (*experiment.ExperimentSpec)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_v1alpha1_ExperimentSpec_To_experiment_ExperimentSpec(a.(*ExperimentSpec), b.(*experiment.ExperimentSpec), scope)
+	if err := s.AddGeneratedConversionFunc((*ExperimentList)(nil), (*hub.ExperimentList)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1alpha1_ExperimentList_To_hub_ExperimentList(a.(*ExperimentList), b.(*hub.ExperimentList), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*experiment.ExperimentSpec)(nil), (*ExperimentSpec)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_experiment_ExperimentSpec_To_v1alpha1_ExperimentSpec(a.(*experiment.ExperimentSpec), b.(*ExperimentSpec), scope)
+	if err := s.AddGeneratedConversionFunc((*hub.ExperimentList)(nil), (*ExperimentList)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_hub_ExperimentList_To_v1alpha1_ExperimentList(a.(*hub.ExperimentList), b.(*ExperimentList), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*ExperimentStatus)(nil), (*experiment.ExperimentStatus)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_v1alpha1_ExperimentStatus_To_experiment_ExperimentStatus(a.(*ExperimentStatus), b.(*experiment.ExperimentStatus), scope)
+	if err := s.AddGeneratedConversionFunc((*ExperimentSpec)(nil), (*hub.ExperimentSpec)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1alpha1_ExperimentSpec_To_hub_ExperimentSpec(a.(*ExperimentSpec), b.(*hub.ExperimentSpec), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*experiment.ExperimentStatus)(nil), (*ExperimentStatus)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_experiment_ExperimentStatus_To_v1alpha1_ExperimentStatus(a.(*experiment.ExperimentStatus), b.(*ExperimentStatus), scope)
+	if err := s.AddGeneratedConversionFunc((*hub.ExperimentSpec)(nil), (*ExperimentSpec)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_hub_ExperimentSpec_To_v1alpha1_ExperimentSpec(a.(*hub.ExperimentSpec), b.(*ExperimentSpec), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*HelmValue)(nil), (*trial.HelmValue)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_v1alpha1_HelmValue_To_trial_HelmValue(a.(*HelmValue), b.(*trial.HelmValue), scope)
+	if err := s.AddGeneratedConversionFunc((*ExperimentStatus)(nil), (*hub.ExperimentStatus)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1alpha1_ExperimentStatus_To_hub_ExperimentStatus(a.(*ExperimentStatus), b.(*hub.ExperimentStatus), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*trial.HelmValue)(nil), (*HelmValue)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_trial_HelmValue_To_v1alpha1_HelmValue(a.(*trial.HelmValue), b.(*HelmValue), scope)
+	if err := s.AddGeneratedConversionFunc((*hub.ExperimentStatus)(nil), (*ExperimentStatus)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_hub_ExperimentStatus_To_v1alpha1_ExperimentStatus(a.(*hub.ExperimentStatus), b.(*ExperimentStatus), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*HelmValueSource)(nil), (*trial.HelmValueSource)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_v1alpha1_HelmValueSource_To_trial_HelmValueSource(a.(*HelmValueSource), b.(*trial.HelmValueSource), scope)
+	if err := s.AddGeneratedConversionFunc((*HelmValue)(nil), (*hub.HelmValue)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1alpha1_HelmValue_To_hub_HelmValue(a.(*HelmValue), b.(*hub.HelmValue), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*trial.HelmValueSource)(nil), (*HelmValueSource)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_trial_HelmValueSource_To_v1alpha1_HelmValueSource(a.(*trial.HelmValueSource), b.(*HelmValueSource), scope)
+	if err := s.AddGeneratedConversionFunc((*hub.HelmValue)(nil), (*HelmValue)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_hub_HelmValue_To_v1alpha1_HelmValue(a.(*hub.HelmValue), b.(*HelmValue), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*HelmValuesFromSource)(nil), (*trial.HelmValuesFromSource)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_v1alpha1_HelmValuesFromSource_To_trial_HelmValuesFromSource(a.(*HelmValuesFromSource), b.(*trial.HelmValuesFromSource), scope)
+	if err := s.AddGeneratedConversionFunc((*HelmValueSource)(nil), (*hub.HelmValueSource)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1alpha1_HelmValueSource_To_hub_HelmValueSource(a.(*HelmValueSource), b.(*hub.HelmValueSource), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*trial.HelmValuesFromSource)(nil), (*HelmValuesFromSource)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_trial_HelmValuesFromSource_To_v1alpha1_HelmValuesFromSource(a.(*trial.HelmValuesFromSource), b.(*HelmValuesFromSource), scope)
+	if err := s.AddGeneratedConversionFunc((*hub.HelmValueSource)(nil), (*HelmValueSource)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_hub_HelmValueSource_To_v1alpha1_HelmValueSource(a.(*hub.HelmValueSource), b.(*HelmValueSource), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*Metric)(nil), (*experiment.Metric)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_v1alpha1_Metric_To_experiment_Metric(a.(*Metric), b.(*experiment.Metric), scope)
+	if err := s.AddGeneratedConversionFunc((*HelmValuesFromSource)(nil), (*hub.HelmValuesFromSource)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1alpha1_HelmValuesFromSource_To_hub_HelmValuesFromSource(a.(*HelmValuesFromSource), b.(*hub.HelmValuesFromSource), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*experiment.Metric)(nil), (*Metric)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_experiment_Metric_To_v1alpha1_Metric(a.(*experiment.Metric), b.(*Metric), scope)
+	if err := s.AddGeneratedConversionFunc((*hub.HelmValuesFromSource)(nil), (*HelmValuesFromSource)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_hub_HelmValuesFromSource_To_v1alpha1_HelmValuesFromSource(a.(*hub.HelmValuesFromSource), b.(*HelmValuesFromSource), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*NamespaceTemplateSpec)(nil), (*experiment.NamespaceTemplateSpec)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_v1alpha1_NamespaceTemplateSpec_To_experiment_NamespaceTemplateSpec(a.(*NamespaceTemplateSpec), b.(*experiment.NamespaceTemplateSpec), scope)
+	if err := s.AddGeneratedConversionFunc((*Metric)(nil), (*hub.Metric)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1alpha1_Metric_To_hub_Metric(a.(*Metric), b.(*hub.Metric), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*experiment.NamespaceTemplateSpec)(nil), (*NamespaceTemplateSpec)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_experiment_NamespaceTemplateSpec_To_v1alpha1_NamespaceTemplateSpec(a.(*experiment.NamespaceTemplateSpec), b.(*NamespaceTemplateSpec), scope)
+	if err := s.AddGeneratedConversionFunc((*hub.Metric)(nil), (*Metric)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_hub_Metric_To_v1alpha1_Metric(a.(*hub.Metric), b.(*Metric), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*Optimization)(nil), (*experiment.Optimization)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_v1alpha1_Optimization_To_experiment_Optimization(a.(*Optimization), b.(*experiment.Optimization), scope)
+	if err := s.AddGeneratedConversionFunc((*NamespaceTemplateSpec)(nil), (*hub.NamespaceTemplateSpec)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1alpha1_NamespaceTemplateSpec_To_hub_NamespaceTemplateSpec(a.(*NamespaceTemplateSpec), b.(*hub.NamespaceTemplateSpec), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*experiment.Optimization)(nil), (*Optimization)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_experiment_Optimization_To_v1alpha1_Optimization(a.(*experiment.Optimization), b.(*Optimization), scope)
+	if err := s.AddGeneratedConversionFunc((*hub.NamespaceTemplateSpec)(nil), (*NamespaceTemplateSpec)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_hub_NamespaceTemplateSpec_To_v1alpha1_NamespaceTemplateSpec(a.(*hub.NamespaceTemplateSpec), b.(*NamespaceTemplateSpec), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*OrderConstraint)(nil), (*experiment.OrderConstraint)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_v1alpha1_OrderConstraint_To_experiment_OrderConstraint(a.(*OrderConstraint), b.(*experiment.OrderConstraint), scope)
+	if err := s.AddGeneratedConversionFunc((*Optimization)(nil), (*hub.Optimization)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1alpha1_Optimization_To_hub_Optimization(a.(*Optimization), b.(*hub.Optimization), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*experiment.OrderConstraint)(nil), (*OrderConstraint)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_experiment_OrderConstraint_To_v1alpha1_OrderConstraint(a.(*experiment.OrderConstraint), b.(*OrderConstraint), scope)
+	if err := s.AddGeneratedConversionFunc((*hub.Optimization)(nil), (*Optimization)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_hub_Optimization_To_v1alpha1_Optimization(a.(*hub.Optimization), b.(*Optimization), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*Parameter)(nil), (*experiment.Parameter)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_v1alpha1_Parameter_To_experiment_Parameter(a.(*Parameter), b.(*experiment.Parameter), scope)
+	if err := s.AddGeneratedConversionFunc((*OrderConstraint)(nil), (*hub.OrderConstraint)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1alpha1_OrderConstraint_To_hub_OrderConstraint(a.(*OrderConstraint), b.(*hub.OrderConstraint), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*experiment.Parameter)(nil), (*Parameter)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_experiment_Parameter_To_v1alpha1_Parameter(a.(*experiment.Parameter), b.(*Parameter), scope)
+	if err := s.AddGeneratedConversionFunc((*hub.OrderConstraint)(nil), (*OrderConstraint)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_hub_OrderConstraint_To_v1alpha1_OrderConstraint(a.(*hub.OrderConstraint), b.(*OrderConstraint), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*ParameterSelector)(nil), (*trial.ParameterSelector)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_v1alpha1_ParameterSelector_To_trial_ParameterSelector(a.(*ParameterSelector), b.(*trial.ParameterSelector), scope)
+	if err := s.AddGeneratedConversionFunc((*Parameter)(nil), (*hub.Parameter)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1alpha1_Parameter_To_hub_Parameter(a.(*Parameter), b.(*hub.Parameter), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*trial.ParameterSelector)(nil), (*ParameterSelector)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_trial_ParameterSelector_To_v1alpha1_ParameterSelector(a.(*trial.ParameterSelector), b.(*ParameterSelector), scope)
+	if err := s.AddGeneratedConversionFunc((*hub.Parameter)(nil), (*Parameter)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_hub_Parameter_To_v1alpha1_Parameter(a.(*hub.Parameter), b.(*Parameter), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*PatchOperation)(nil), (*trial.PatchOperation)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_v1alpha1_PatchOperation_To_trial_PatchOperation(a.(*PatchOperation), b.(*trial.PatchOperation), scope)
+	if err := s.AddGeneratedConversionFunc((*ParameterSelector)(nil), (*hub.ParameterSelector)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1alpha1_ParameterSelector_To_hub_ParameterSelector(a.(*ParameterSelector), b.(*hub.ParameterSelector), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*trial.PatchOperation)(nil), (*PatchOperation)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_trial_PatchOperation_To_v1alpha1_PatchOperation(a.(*trial.PatchOperation), b.(*PatchOperation), scope)
+	if err := s.AddGeneratedConversionFunc((*hub.ParameterSelector)(nil), (*ParameterSelector)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_hub_ParameterSelector_To_v1alpha1_ParameterSelector(a.(*hub.ParameterSelector), b.(*ParameterSelector), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*PatchReadinessGate)(nil), (*experiment.PatchReadinessGate)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_v1alpha1_PatchReadinessGate_To_experiment_PatchReadinessGate(a.(*PatchReadinessGate), b.(*experiment.PatchReadinessGate), scope)
+	if err := s.AddGeneratedConversionFunc((*PatchOperation)(nil), (*hub.PatchOperation)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1alpha1_PatchOperation_To_hub_PatchOperation(a.(*PatchOperation), b.(*hub.PatchOperation), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*experiment.PatchReadinessGate)(nil), (*PatchReadinessGate)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_experiment_PatchReadinessGate_To_v1alpha1_PatchReadinessGate(a.(*experiment.PatchReadinessGate), b.(*PatchReadinessGate), scope)
+	if err := s.AddGeneratedConversionFunc((*hub.PatchOperation)(nil), (*PatchOperation)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_hub_PatchOperation_To_v1alpha1_PatchOperation(a.(*hub.PatchOperation), b.(*PatchOperation), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*PatchTemplate)(nil), (*experiment.PatchTemplate)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_v1alpha1_PatchTemplate_To_experiment_PatchTemplate(a.(*PatchTemplate), b.(*experiment.PatchTemplate), scope)
+	if err := s.AddGeneratedConversionFunc((*PatchReadinessGate)(nil), (*hub.PatchReadinessGate)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1alpha1_PatchReadinessGate_To_hub_PatchReadinessGate(a.(*PatchReadinessGate), b.(*hub.PatchReadinessGate), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*experiment.PatchTemplate)(nil), (*PatchTemplate)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_experiment_PatchTemplate_To_v1alpha1_PatchTemplate(a.(*experiment.PatchTemplate), b.(*PatchTemplate), scope)
+	if err := s.AddGeneratedConversionFunc((*hub.PatchReadinessGate)(nil), (*PatchReadinessGate)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_hub_PatchReadinessGate_To_v1alpha1_PatchReadinessGate(a.(*hub.PatchReadinessGate), b.(*PatchReadinessGate), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*ReadinessCheck)(nil), (*trial.ReadinessCheck)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_v1alpha1_ReadinessCheck_To_trial_ReadinessCheck(a.(*ReadinessCheck), b.(*trial.ReadinessCheck), scope)
+	if err := s.AddGeneratedConversionFunc((*PatchTemplate)(nil), (*hub.PatchTemplate)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1alpha1_PatchTemplate_To_hub_PatchTemplate(a.(*PatchTemplate), b.(*hub.PatchTemplate), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*trial.ReadinessCheck)(nil), (*ReadinessCheck)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_trial_ReadinessCheck_To_v1alpha1_ReadinessCheck(a.(*trial.ReadinessCheck), b.(*ReadinessCheck), scope)
+	if err := s.AddGeneratedConversionFunc((*hub.PatchTemplate)(nil), (*PatchTemplate)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_hub_PatchTemplate_To_v1alpha1_PatchTemplate(a.(*hub.PatchTemplate), b.(*PatchTemplate), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*SetupTask)(nil), (*trial.SetupTask)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_v1alpha1_SetupTask_To_trial_SetupTask(a.(*SetupTask), b.(*trial.SetupTask), scope)
+	if err := s.AddGeneratedConversionFunc((*ReadinessCheck)(nil), (*hub.ReadinessCheck)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1alpha1_ReadinessCheck_To_hub_ReadinessCheck(a.(*ReadinessCheck), b.(*hub.ReadinessCheck), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*trial.SetupTask)(nil), (*SetupTask)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_trial_SetupTask_To_v1alpha1_SetupTask(a.(*trial.SetupTask), b.(*SetupTask), scope)
+	if err := s.AddGeneratedConversionFunc((*hub.ReadinessCheck)(nil), (*ReadinessCheck)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_hub_ReadinessCheck_To_v1alpha1_ReadinessCheck(a.(*hub.ReadinessCheck), b.(*ReadinessCheck), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*SumConstraint)(nil), (*experiment.SumConstraint)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_v1alpha1_SumConstraint_To_experiment_SumConstraint(a.(*SumConstraint), b.(*experiment.SumConstraint), scope)
+	if err := s.AddGeneratedConversionFunc((*SetupTask)(nil), (*hub.SetupTask)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1alpha1_SetupTask_To_hub_SetupTask(a.(*SetupTask), b.(*hub.SetupTask), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*experiment.SumConstraint)(nil), (*SumConstraint)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_experiment_SumConstraint_To_v1alpha1_SumConstraint(a.(*experiment.SumConstraint), b.(*SumConstraint), scope)
+	if err := s.AddGeneratedConversionFunc((*hub.SetupTask)(nil), (*SetupTask)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_hub_SetupTask_To_v1alpha1_SetupTask(a.(*hub.SetupTask), b.(*SetupTask), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*SumConstraintParameter)(nil), (*experiment.SumConstraintParameter)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_v1alpha1_SumConstraintParameter_To_experiment_SumConstraintParameter(a.(*SumConstraintParameter), b.(*experiment.SumConstraintParameter), scope)
+	if err := s.AddGeneratedConversionFunc((*SumConstraint)(nil), (*hub.SumConstraint)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1alpha1_SumConstraint_To_hub_SumConstraint(a.(*SumConstraint), b.(*hub.SumConstraint), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*experiment.SumConstraintParameter)(nil), (*SumConstraintParameter)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_experiment_SumConstraintParameter_To_v1alpha1_SumConstraintParameter(a.(*experiment.SumConstraintParameter), b.(*SumConstraintParameter), scope)
+	if err := s.AddGeneratedConversionFunc((*hub.SumConstraint)(nil), (*SumConstraint)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_hub_SumConstraint_To_v1alpha1_SumConstraint(a.(*hub.SumConstraint), b.(*SumConstraint), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*Trial)(nil), (*trial.Trial)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_v1alpha1_Trial_To_trial_Trial(a.(*Trial), b.(*trial.Trial), scope)
+	if err := s.AddGeneratedConversionFunc((*SumConstraintParameter)(nil), (*hub.SumConstraintParameter)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1alpha1_SumConstraintParameter_To_hub_SumConstraintParameter(a.(*SumConstraintParameter), b.(*hub.SumConstraintParameter), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*trial.Trial)(nil), (*Trial)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_trial_Trial_To_v1alpha1_Trial(a.(*trial.Trial), b.(*Trial), scope)
+	if err := s.AddGeneratedConversionFunc((*hub.SumConstraintParameter)(nil), (*SumConstraintParameter)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_hub_SumConstraintParameter_To_v1alpha1_SumConstraintParameter(a.(*hub.SumConstraintParameter), b.(*SumConstraintParameter), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*TrialCondition)(nil), (*trial.TrialCondition)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_v1alpha1_TrialCondition_To_trial_TrialCondition(a.(*TrialCondition), b.(*trial.TrialCondition), scope)
+	if err := s.AddGeneratedConversionFunc((*Trial)(nil), (*hub.Trial)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1alpha1_Trial_To_hub_Trial(a.(*Trial), b.(*hub.Trial), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*trial.TrialCondition)(nil), (*TrialCondition)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_trial_TrialCondition_To_v1alpha1_TrialCondition(a.(*trial.TrialCondition), b.(*TrialCondition), scope)
+	if err := s.AddGeneratedConversionFunc((*hub.Trial)(nil), (*Trial)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_hub_Trial_To_v1alpha1_Trial(a.(*hub.Trial), b.(*Trial), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*TrialReadinessGate)(nil), (*trial.TrialReadinessGate)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_v1alpha1_TrialReadinessGate_To_trial_TrialReadinessGate(a.(*TrialReadinessGate), b.(*trial.TrialReadinessGate), scope)
+	if err := s.AddGeneratedConversionFunc((*TrialCondition)(nil), (*hub.TrialCondition)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1alpha1_TrialCondition_To_hub_TrialCondition(a.(*TrialCondition), b.(*hub.TrialCondition), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*trial.TrialReadinessGate)(nil), (*TrialReadinessGate)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_trial_TrialReadinessGate_To_v1alpha1_TrialReadinessGate(a.(*trial.TrialReadinessGate), b.(*TrialReadinessGate), scope)
+	if err := s.AddGeneratedConversionFunc((*hub.TrialCondition)(nil), (*TrialCondition)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_hub_TrialCondition_To_v1alpha1_TrialCondition(a.(*hub.TrialCondition), b.(*TrialCondition), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*TrialSpec)(nil), (*trial.TrialSpec)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_v1alpha1_TrialSpec_To_trial_TrialSpec(a.(*TrialSpec), b.(*trial.TrialSpec), scope)
+	if err := s.AddGeneratedConversionFunc((*TrialList)(nil), (*hub.TrialList)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1alpha1_TrialList_To_hub_TrialList(a.(*TrialList), b.(*hub.TrialList), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*trial.TrialSpec)(nil), (*TrialSpec)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_trial_TrialSpec_To_v1alpha1_TrialSpec(a.(*trial.TrialSpec), b.(*TrialSpec), scope)
+	if err := s.AddGeneratedConversionFunc((*hub.TrialList)(nil), (*TrialList)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_hub_TrialList_To_v1alpha1_TrialList(a.(*hub.TrialList), b.(*TrialList), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*TrialStatus)(nil), (*trial.TrialStatus)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_v1alpha1_TrialStatus_To_trial_TrialStatus(a.(*TrialStatus), b.(*trial.TrialStatus), scope)
+	if err := s.AddGeneratedConversionFunc((*TrialReadinessGate)(nil), (*hub.TrialReadinessGate)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1alpha1_TrialReadinessGate_To_hub_TrialReadinessGate(a.(*TrialReadinessGate), b.(*hub.TrialReadinessGate), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*trial.TrialStatus)(nil), (*TrialStatus)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_trial_TrialStatus_To_v1alpha1_TrialStatus(a.(*trial.TrialStatus), b.(*TrialStatus), scope)
+	if err := s.AddGeneratedConversionFunc((*hub.TrialReadinessGate)(nil), (*TrialReadinessGate)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_hub_TrialReadinessGate_To_v1alpha1_TrialReadinessGate(a.(*hub.TrialReadinessGate), b.(*TrialReadinessGate), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*TrialTemplateSpec)(nil), (*experiment.TrialTemplateSpec)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_v1alpha1_TrialTemplateSpec_To_experiment_TrialTemplateSpec(a.(*TrialTemplateSpec), b.(*experiment.TrialTemplateSpec), scope)
+	if err := s.AddGeneratedConversionFunc((*TrialSpec)(nil), (*hub.TrialSpec)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1alpha1_TrialSpec_To_hub_TrialSpec(a.(*TrialSpec), b.(*hub.TrialSpec), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*experiment.TrialTemplateSpec)(nil), (*TrialTemplateSpec)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_experiment_TrialTemplateSpec_To_v1alpha1_TrialTemplateSpec(a.(*experiment.TrialTemplateSpec), b.(*TrialTemplateSpec), scope)
+	if err := s.AddGeneratedConversionFunc((*hub.TrialSpec)(nil), (*TrialSpec)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_hub_TrialSpec_To_v1alpha1_TrialSpec(a.(*hub.TrialSpec), b.(*TrialSpec), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*Value)(nil), (*trial.Value)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_v1alpha1_Value_To_trial_Value(a.(*Value), b.(*trial.Value), scope)
+	if err := s.AddGeneratedConversionFunc((*TrialStatus)(nil), (*hub.TrialStatus)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1alpha1_TrialStatus_To_hub_TrialStatus(a.(*TrialStatus), b.(*hub.TrialStatus), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*trial.Value)(nil), (*Value)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_trial_Value_To_v1alpha1_Value(a.(*trial.Value), b.(*Value), scope)
+	if err := s.AddGeneratedConversionFunc((*hub.TrialStatus)(nil), (*TrialStatus)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_hub_TrialStatus_To_v1alpha1_TrialStatus(a.(*hub.TrialStatus), b.(*TrialStatus), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*TrialTemplateSpec)(nil), (*hub.TrialTemplateSpec)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1alpha1_TrialTemplateSpec_To_hub_TrialTemplateSpec(a.(*TrialTemplateSpec), b.(*hub.TrialTemplateSpec), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*hub.TrialTemplateSpec)(nil), (*TrialTemplateSpec)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_hub_TrialTemplateSpec_To_v1alpha1_TrialTemplateSpec(a.(*hub.TrialTemplateSpec), b.(*TrialTemplateSpec), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*Value)(nil), (*hub.Value)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1alpha1_Value_To_hub_Value(a.(*Value), b.(*hub.Value), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddGeneratedConversionFunc((*hub.Value)(nil), (*Value)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_hub_Value_To_v1alpha1_Value(a.(*hub.Value), b.(*Value), scope)
 	}); err != nil {
 		return err
 	}
 	return nil
 }
 
-func autoConvert_v1alpha1_Assignment_To_trial_Assignment(in *Assignment, out *trial.Assignment, s conversion.Scope) error {
+func autoConvert_v1alpha1_Assignment_To_hub_Assignment(in *Assignment, out *hub.Assignment, s conversion.Scope) error {
 	out.Name = in.Name
 	out.Value = in.Value
 	return nil
 }
 
-// Convert_v1alpha1_Assignment_To_trial_Assignment is an autogenerated conversion function.
-func Convert_v1alpha1_Assignment_To_trial_Assignment(in *Assignment, out *trial.Assignment, s conversion.Scope) error {
-	return autoConvert_v1alpha1_Assignment_To_trial_Assignment(in, out, s)
+// Convert_v1alpha1_Assignment_To_hub_Assignment is an autogenerated conversion function.
+func Convert_v1alpha1_Assignment_To_hub_Assignment(in *Assignment, out *hub.Assignment, s conversion.Scope) error {
+	return autoConvert_v1alpha1_Assignment_To_hub_Assignment(in, out, s)
 }
 
-func autoConvert_trial_Assignment_To_v1alpha1_Assignment(in *trial.Assignment, out *Assignment, s conversion.Scope) error {
+func autoConvert_hub_Assignment_To_v1alpha1_Assignment(in *hub.Assignment, out *Assignment, s conversion.Scope) error {
 	out.Name = in.Name
 	out.Value = in.Value
 	return nil
 }
 
-// Convert_trial_Assignment_To_v1alpha1_Assignment is an autogenerated conversion function.
-func Convert_trial_Assignment_To_v1alpha1_Assignment(in *trial.Assignment, out *Assignment, s conversion.Scope) error {
-	return autoConvert_trial_Assignment_To_v1alpha1_Assignment(in, out, s)
+// Convert_hub_Assignment_To_v1alpha1_Assignment is an autogenerated conversion function.
+func Convert_hub_Assignment_To_v1alpha1_Assignment(in *hub.Assignment, out *Assignment, s conversion.Scope) error {
+	return autoConvert_hub_Assignment_To_v1alpha1_Assignment(in, out, s)
 }
 
-func autoConvert_v1alpha1_ConfigMapHelmValuesFromSource_To_trial_ConfigMapHelmValuesFromSource(in *ConfigMapHelmValuesFromSource, out *trial.ConfigMapHelmValuesFromSource, s conversion.Scope) error {
+func autoConvert_v1alpha1_ConfigMapHelmValuesFromSource_To_hub_ConfigMapHelmValuesFromSource(in *ConfigMapHelmValuesFromSource, out *hub.ConfigMapHelmValuesFromSource, s conversion.Scope) error {
 	out.LocalObjectReference = in.LocalObjectReference
 	return nil
 }
 
-// Convert_v1alpha1_ConfigMapHelmValuesFromSource_To_trial_ConfigMapHelmValuesFromSource is an autogenerated conversion function.
-func Convert_v1alpha1_ConfigMapHelmValuesFromSource_To_trial_ConfigMapHelmValuesFromSource(in *ConfigMapHelmValuesFromSource, out *trial.ConfigMapHelmValuesFromSource, s conversion.Scope) error {
-	return autoConvert_v1alpha1_ConfigMapHelmValuesFromSource_To_trial_ConfigMapHelmValuesFromSource(in, out, s)
+// Convert_v1alpha1_ConfigMapHelmValuesFromSource_To_hub_ConfigMapHelmValuesFromSource is an autogenerated conversion function.
+func Convert_v1alpha1_ConfigMapHelmValuesFromSource_To_hub_ConfigMapHelmValuesFromSource(in *ConfigMapHelmValuesFromSource, out *hub.ConfigMapHelmValuesFromSource, s conversion.Scope) error {
+	return autoConvert_v1alpha1_ConfigMapHelmValuesFromSource_To_hub_ConfigMapHelmValuesFromSource(in, out, s)
 }
 
-func autoConvert_trial_ConfigMapHelmValuesFromSource_To_v1alpha1_ConfigMapHelmValuesFromSource(in *trial.ConfigMapHelmValuesFromSource, out *ConfigMapHelmValuesFromSource, s conversion.Scope) error {
+func autoConvert_hub_ConfigMapHelmValuesFromSource_To_v1alpha1_ConfigMapHelmValuesFromSource(in *hub.ConfigMapHelmValuesFromSource, out *ConfigMapHelmValuesFromSource, s conversion.Scope) error {
 	out.LocalObjectReference = in.LocalObjectReference
 	return nil
 }
 
-// Convert_trial_ConfigMapHelmValuesFromSource_To_v1alpha1_ConfigMapHelmValuesFromSource is an autogenerated conversion function.
-func Convert_trial_ConfigMapHelmValuesFromSource_To_v1alpha1_ConfigMapHelmValuesFromSource(in *trial.ConfigMapHelmValuesFromSource, out *ConfigMapHelmValuesFromSource, s conversion.Scope) error {
-	return autoConvert_trial_ConfigMapHelmValuesFromSource_To_v1alpha1_ConfigMapHelmValuesFromSource(in, out, s)
+// Convert_hub_ConfigMapHelmValuesFromSource_To_v1alpha1_ConfigMapHelmValuesFromSource is an autogenerated conversion function.
+func Convert_hub_ConfigMapHelmValuesFromSource_To_v1alpha1_ConfigMapHelmValuesFromSource(in *hub.ConfigMapHelmValuesFromSource, out *ConfigMapHelmValuesFromSource, s conversion.Scope) error {
+	return autoConvert_hub_ConfigMapHelmValuesFromSource_To_v1alpha1_ConfigMapHelmValuesFromSource(in, out, s)
 }
 
-func autoConvert_v1alpha1_Constraint_To_experiment_Constraint(in *Constraint, out *experiment.Constraint, s conversion.Scope) error {
+func autoConvert_v1alpha1_Constraint_To_hub_Constraint(in *Constraint, out *hub.Constraint, s conversion.Scope) error {
 	out.Name = in.Name
 	if in.Order != nil {
 		in, out := &in.Order, &out.Order
-		*out = new(experiment.OrderConstraint)
-		if err := Convert_v1alpha1_OrderConstraint_To_experiment_OrderConstraint(*in, *out, s); err != nil {
+		*out = new(hub.OrderConstraint)
+		if err := Convert_v1alpha1_OrderConstraint_To_hub_OrderConstraint(*in, *out, s); err != nil {
 			return err
 		}
 	} else {
@@ -384,8 +403,8 @@ func autoConvert_v1alpha1_Constraint_To_experiment_Constraint(in *Constraint, ou
 	}
 	if in.Sum != nil {
 		in, out := &in.Sum, &out.Sum
-		*out = new(experiment.SumConstraint)
-		if err := Convert_v1alpha1_SumConstraint_To_experiment_SumConstraint(*in, *out, s); err != nil {
+		*out = new(hub.SumConstraint)
+		if err := Convert_v1alpha1_SumConstraint_To_hub_SumConstraint(*in, *out, s); err != nil {
 			return err
 		}
 	} else {
@@ -394,17 +413,17 @@ func autoConvert_v1alpha1_Constraint_To_experiment_Constraint(in *Constraint, ou
 	return nil
 }
 
-// Convert_v1alpha1_Constraint_To_experiment_Constraint is an autogenerated conversion function.
-func Convert_v1alpha1_Constraint_To_experiment_Constraint(in *Constraint, out *experiment.Constraint, s conversion.Scope) error {
-	return autoConvert_v1alpha1_Constraint_To_experiment_Constraint(in, out, s)
+// Convert_v1alpha1_Constraint_To_hub_Constraint is an autogenerated conversion function.
+func Convert_v1alpha1_Constraint_To_hub_Constraint(in *Constraint, out *hub.Constraint, s conversion.Scope) error {
+	return autoConvert_v1alpha1_Constraint_To_hub_Constraint(in, out, s)
 }
 
-func autoConvert_experiment_Constraint_To_v1alpha1_Constraint(in *experiment.Constraint, out *Constraint, s conversion.Scope) error {
+func autoConvert_hub_Constraint_To_v1alpha1_Constraint(in *hub.Constraint, out *Constraint, s conversion.Scope) error {
 	out.Name = in.Name
 	if in.Order != nil {
 		in, out := &in.Order, &out.Order
 		*out = new(OrderConstraint)
-		if err := Convert_experiment_OrderConstraint_To_v1alpha1_OrderConstraint(*in, *out, s); err != nil {
+		if err := Convert_hub_OrderConstraint_To_v1alpha1_OrderConstraint(*in, *out, s); err != nil {
 			return err
 		}
 	} else {
@@ -413,7 +432,7 @@ func autoConvert_experiment_Constraint_To_v1alpha1_Constraint(in *experiment.Con
 	if in.Sum != nil {
 		in, out := &in.Sum, &out.Sum
 		*out = new(SumConstraint)
-		if err := Convert_experiment_SumConstraint_To_v1alpha1_SumConstraint(*in, *out, s); err != nil {
+		if err := Convert_hub_SumConstraint_To_v1alpha1_SumConstraint(*in, *out, s); err != nil {
 			return err
 		}
 	} else {
@@ -422,50 +441,92 @@ func autoConvert_experiment_Constraint_To_v1alpha1_Constraint(in *experiment.Con
 	return nil
 }
 
-// Convert_experiment_Constraint_To_v1alpha1_Constraint is an autogenerated conversion function.
-func Convert_experiment_Constraint_To_v1alpha1_Constraint(in *experiment.Constraint, out *Constraint, s conversion.Scope) error {
-	return autoConvert_experiment_Constraint_To_v1alpha1_Constraint(in, out, s)
+// Convert_hub_Constraint_To_v1alpha1_Constraint is an autogenerated conversion function.
+func Convert_hub_Constraint_To_v1alpha1_Constraint(in *hub.Constraint, out *Constraint, s conversion.Scope) error {
+	return autoConvert_hub_Constraint_To_v1alpha1_Constraint(in, out, s)
 }
 
-func autoConvert_v1alpha1_Experiment_To_experiment_Experiment(in *Experiment, out *experiment.Experiment, s conversion.Scope) error {
+func autoConvert_v1alpha1_Experiment_To_hub_Experiment(in *Experiment, out *hub.Experiment, s conversion.Scope) error {
 	out.ObjectMeta = in.ObjectMeta
-	if err := Convert_v1alpha1_ExperimentSpec_To_experiment_ExperimentSpec(&in.Spec, &out.Spec, s); err != nil {
+	if err := Convert_v1alpha1_ExperimentSpec_To_hub_ExperimentSpec(&in.Spec, &out.Spec, s); err != nil {
 		return err
 	}
-	if err := Convert_v1alpha1_ExperimentStatus_To_experiment_ExperimentStatus(&in.Status, &out.Status, s); err != nil {
+	if err := Convert_v1alpha1_ExperimentStatus_To_hub_ExperimentStatus(&in.Status, &out.Status, s); err != nil {
 		return err
 	}
 	return nil
 }
 
-// Convert_v1alpha1_Experiment_To_experiment_Experiment is an autogenerated conversion function.
-func Convert_v1alpha1_Experiment_To_experiment_Experiment(in *Experiment, out *experiment.Experiment, s conversion.Scope) error {
-	return autoConvert_v1alpha1_Experiment_To_experiment_Experiment(in, out, s)
+// Convert_v1alpha1_Experiment_To_hub_Experiment is an autogenerated conversion function.
+func Convert_v1alpha1_Experiment_To_hub_Experiment(in *Experiment, out *hub.Experiment, s conversion.Scope) error {
+	return autoConvert_v1alpha1_Experiment_To_hub_Experiment(in, out, s)
 }
 
-func autoConvert_experiment_Experiment_To_v1alpha1_Experiment(in *experiment.Experiment, out *Experiment, s conversion.Scope) error {
+func autoConvert_hub_Experiment_To_v1alpha1_Experiment(in *hub.Experiment, out *Experiment, s conversion.Scope) error {
 	out.ObjectMeta = in.ObjectMeta
-	if err := Convert_experiment_ExperimentSpec_To_v1alpha1_ExperimentSpec(&in.Spec, &out.Spec, s); err != nil {
+	if err := Convert_hub_ExperimentSpec_To_v1alpha1_ExperimentSpec(&in.Spec, &out.Spec, s); err != nil {
 		return err
 	}
-	if err := Convert_experiment_ExperimentStatus_To_v1alpha1_ExperimentStatus(&in.Status, &out.Status, s); err != nil {
+	if err := Convert_hub_ExperimentStatus_To_v1alpha1_ExperimentStatus(&in.Status, &out.Status, s); err != nil {
 		return err
 	}
 	return nil
 }
 
-// Convert_experiment_Experiment_To_v1alpha1_Experiment is an autogenerated conversion function.
-func Convert_experiment_Experiment_To_v1alpha1_Experiment(in *experiment.Experiment, out *Experiment, s conversion.Scope) error {
-	return autoConvert_experiment_Experiment_To_v1alpha1_Experiment(in, out, s)
+// Convert_hub_Experiment_To_v1alpha1_Experiment is an autogenerated conversion function.
+func Convert_hub_Experiment_To_v1alpha1_Experiment(in *hub.Experiment, out *Experiment, s conversion.Scope) error {
+	return autoConvert_hub_Experiment_To_v1alpha1_Experiment(in, out, s)
 }
 
-func autoConvert_v1alpha1_ExperimentSpec_To_experiment_ExperimentSpec(in *ExperimentSpec, out *experiment.ExperimentSpec, s conversion.Scope) error {
+func autoConvert_v1alpha1_ExperimentList_To_hub_ExperimentList(in *ExperimentList, out *hub.ExperimentList, s conversion.Scope) error {
+	out.ListMeta = in.ListMeta
+	if in.Items != nil {
+		in, out := &in.Items, &out.Items
+		*out = make([]hub.Experiment, len(*in))
+		for i := range *in {
+			if err := Convert_v1alpha1_Experiment_To_hub_Experiment(&(*in)[i], &(*out)[i], s); err != nil {
+				return err
+			}
+		}
+	} else {
+		out.Items = nil
+	}
+	return nil
+}
+
+// Convert_v1alpha1_ExperimentList_To_hub_ExperimentList is an autogenerated conversion function.
+func Convert_v1alpha1_ExperimentList_To_hub_ExperimentList(in *ExperimentList, out *hub.ExperimentList, s conversion.Scope) error {
+	return autoConvert_v1alpha1_ExperimentList_To_hub_ExperimentList(in, out, s)
+}
+
+func autoConvert_hub_ExperimentList_To_v1alpha1_ExperimentList(in *hub.ExperimentList, out *ExperimentList, s conversion.Scope) error {
+	out.ListMeta = in.ListMeta
+	if in.Items != nil {
+		in, out := &in.Items, &out.Items
+		*out = make([]Experiment, len(*in))
+		for i := range *in {
+			if err := Convert_hub_Experiment_To_v1alpha1_Experiment(&(*in)[i], &(*out)[i], s); err != nil {
+				return err
+			}
+		}
+	} else {
+		out.Items = nil
+	}
+	return nil
+}
+
+// Convert_hub_ExperimentList_To_v1alpha1_ExperimentList is an autogenerated conversion function.
+func Convert_hub_ExperimentList_To_v1alpha1_ExperimentList(in *hub.ExperimentList, out *ExperimentList, s conversion.Scope) error {
+	return autoConvert_hub_ExperimentList_To_v1alpha1_ExperimentList(in, out, s)
+}
+
+func autoConvert_v1alpha1_ExperimentSpec_To_hub_ExperimentSpec(in *ExperimentSpec, out *hub.ExperimentSpec, s conversion.Scope) error {
 	out.Replicas = in.Replicas
 	if in.Optimization != nil {
 		in, out := &in.Optimization, &out.Optimization
-		*out = make([]experiment.Optimization, len(*in))
+		*out = make([]hub.Optimization, len(*in))
 		for i := range *in {
-			if err := Convert_v1alpha1_Optimization_To_experiment_Optimization(&(*in)[i], &(*out)[i], s); err != nil {
+			if err := Convert_v1alpha1_Optimization_To_hub_Optimization(&(*in)[i], &(*out)[i], s); err != nil {
 				return err
 			}
 		}
@@ -474,9 +535,9 @@ func autoConvert_v1alpha1_ExperimentSpec_To_experiment_ExperimentSpec(in *Experi
 	}
 	if in.Parameters != nil {
 		in, out := &in.Parameters, &out.Parameters
-		*out = make([]experiment.Parameter, len(*in))
+		*out = make([]hub.Parameter, len(*in))
 		for i := range *in {
-			if err := Convert_v1alpha1_Parameter_To_experiment_Parameter(&(*in)[i], &(*out)[i], s); err != nil {
+			if err := Convert_v1alpha1_Parameter_To_hub_Parameter(&(*in)[i], &(*out)[i], s); err != nil {
 				return err
 			}
 		}
@@ -485,9 +546,9 @@ func autoConvert_v1alpha1_ExperimentSpec_To_experiment_ExperimentSpec(in *Experi
 	}
 	if in.Constraints != nil {
 		in, out := &in.Constraints, &out.Constraints
-		*out = make([]experiment.Constraint, len(*in))
+		*out = make([]hub.Constraint, len(*in))
 		for i := range *in {
-			if err := Convert_v1alpha1_Constraint_To_experiment_Constraint(&(*in)[i], &(*out)[i], s); err != nil {
+			if err := Convert_v1alpha1_Constraint_To_hub_Constraint(&(*in)[i], &(*out)[i], s); err != nil {
 				return err
 			}
 		}
@@ -496,9 +557,9 @@ func autoConvert_v1alpha1_ExperimentSpec_To_experiment_ExperimentSpec(in *Experi
 	}
 	if in.Metrics != nil {
 		in, out := &in.Metrics, &out.Metrics
-		*out = make([]experiment.Metric, len(*in))
+		*out = make([]hub.Metric, len(*in))
 		for i := range *in {
-			if err := Convert_v1alpha1_Metric_To_experiment_Metric(&(*in)[i], &(*out)[i], s); err != nil {
+			if err := Convert_v1alpha1_Metric_To_hub_Metric(&(*in)[i], &(*out)[i], s); err != nil {
 				return err
 			}
 		}
@@ -507,9 +568,9 @@ func autoConvert_v1alpha1_ExperimentSpec_To_experiment_ExperimentSpec(in *Experi
 	}
 	if in.Patches != nil {
 		in, out := &in.Patches, &out.Patches
-		*out = make([]experiment.PatchTemplate, len(*in))
+		*out = make([]hub.PatchTemplate, len(*in))
 		for i := range *in {
-			if err := Convert_v1alpha1_PatchTemplate_To_experiment_PatchTemplate(&(*in)[i], &(*out)[i], s); err != nil {
+			if err := Convert_v1alpha1_PatchTemplate_To_hub_PatchTemplate(&(*in)[i], &(*out)[i], s); err != nil {
 				return err
 			}
 		}
@@ -519,32 +580,32 @@ func autoConvert_v1alpha1_ExperimentSpec_To_experiment_ExperimentSpec(in *Experi
 	out.NamespaceSelector = in.NamespaceSelector
 	if in.NamespaceTemplate != nil {
 		in, out := &in.NamespaceTemplate, &out.NamespaceTemplate
-		*out = new(experiment.NamespaceTemplateSpec)
-		if err := Convert_v1alpha1_NamespaceTemplateSpec_To_experiment_NamespaceTemplateSpec(*in, *out, s); err != nil {
+		*out = new(hub.NamespaceTemplateSpec)
+		if err := Convert_v1alpha1_NamespaceTemplateSpec_To_hub_NamespaceTemplateSpec(*in, *out, s); err != nil {
 			return err
 		}
 	} else {
 		out.NamespaceTemplate = nil
 	}
 	out.Selector = in.Selector
-	if err := Convert_v1alpha1_TrialTemplateSpec_To_experiment_TrialTemplateSpec(&in.Template, &out.Template, s); err != nil {
+	if err := Convert_v1alpha1_TrialTemplateSpec_To_hub_TrialTemplateSpec(&in.Template, &out.Template, s); err != nil {
 		return err
 	}
 	return nil
 }
 
-// Convert_v1alpha1_ExperimentSpec_To_experiment_ExperimentSpec is an autogenerated conversion function.
-func Convert_v1alpha1_ExperimentSpec_To_experiment_ExperimentSpec(in *ExperimentSpec, out *experiment.ExperimentSpec, s conversion.Scope) error {
-	return autoConvert_v1alpha1_ExperimentSpec_To_experiment_ExperimentSpec(in, out, s)
+// Convert_v1alpha1_ExperimentSpec_To_hub_ExperimentSpec is an autogenerated conversion function.
+func Convert_v1alpha1_ExperimentSpec_To_hub_ExperimentSpec(in *ExperimentSpec, out *hub.ExperimentSpec, s conversion.Scope) error {
+	return autoConvert_v1alpha1_ExperimentSpec_To_hub_ExperimentSpec(in, out, s)
 }
 
-func autoConvert_experiment_ExperimentSpec_To_v1alpha1_ExperimentSpec(in *experiment.ExperimentSpec, out *ExperimentSpec, s conversion.Scope) error {
+func autoConvert_hub_ExperimentSpec_To_v1alpha1_ExperimentSpec(in *hub.ExperimentSpec, out *ExperimentSpec, s conversion.Scope) error {
 	out.Replicas = in.Replicas
 	if in.Optimization != nil {
 		in, out := &in.Optimization, &out.Optimization
 		*out = make([]Optimization, len(*in))
 		for i := range *in {
-			if err := Convert_experiment_Optimization_To_v1alpha1_Optimization(&(*in)[i], &(*out)[i], s); err != nil {
+			if err := Convert_hub_Optimization_To_v1alpha1_Optimization(&(*in)[i], &(*out)[i], s); err != nil {
 				return err
 			}
 		}
@@ -555,7 +616,7 @@ func autoConvert_experiment_ExperimentSpec_To_v1alpha1_ExperimentSpec(in *experi
 		in, out := &in.Parameters, &out.Parameters
 		*out = make([]Parameter, len(*in))
 		for i := range *in {
-			if err := Convert_experiment_Parameter_To_v1alpha1_Parameter(&(*in)[i], &(*out)[i], s); err != nil {
+			if err := Convert_hub_Parameter_To_v1alpha1_Parameter(&(*in)[i], &(*out)[i], s); err != nil {
 				return err
 			}
 		}
@@ -566,7 +627,7 @@ func autoConvert_experiment_ExperimentSpec_To_v1alpha1_ExperimentSpec(in *experi
 		in, out := &in.Constraints, &out.Constraints
 		*out = make([]Constraint, len(*in))
 		for i := range *in {
-			if err := Convert_experiment_Constraint_To_v1alpha1_Constraint(&(*in)[i], &(*out)[i], s); err != nil {
+			if err := Convert_hub_Constraint_To_v1alpha1_Constraint(&(*in)[i], &(*out)[i], s); err != nil {
 				return err
 			}
 		}
@@ -577,7 +638,7 @@ func autoConvert_experiment_ExperimentSpec_To_v1alpha1_ExperimentSpec(in *experi
 		in, out := &in.Metrics, &out.Metrics
 		*out = make([]Metric, len(*in))
 		for i := range *in {
-			if err := Convert_experiment_Metric_To_v1alpha1_Metric(&(*in)[i], &(*out)[i], s); err != nil {
+			if err := Convert_hub_Metric_To_v1alpha1_Metric(&(*in)[i], &(*out)[i], s); err != nil {
 				return err
 			}
 		}
@@ -588,7 +649,7 @@ func autoConvert_experiment_ExperimentSpec_To_v1alpha1_ExperimentSpec(in *experi
 		in, out := &in.Patches, &out.Patches
 		*out = make([]PatchTemplate, len(*in))
 		for i := range *in {
-			if err := Convert_experiment_PatchTemplate_To_v1alpha1_PatchTemplate(&(*in)[i], &(*out)[i], s); err != nil {
+			if err := Convert_hub_PatchTemplate_To_v1alpha1_PatchTemplate(&(*in)[i], &(*out)[i], s); err != nil {
 				return err
 			}
 		}
@@ -599,54 +660,54 @@ func autoConvert_experiment_ExperimentSpec_To_v1alpha1_ExperimentSpec(in *experi
 	if in.NamespaceTemplate != nil {
 		in, out := &in.NamespaceTemplate, &out.NamespaceTemplate
 		*out = new(NamespaceTemplateSpec)
-		if err := Convert_experiment_NamespaceTemplateSpec_To_v1alpha1_NamespaceTemplateSpec(*in, *out, s); err != nil {
+		if err := Convert_hub_NamespaceTemplateSpec_To_v1alpha1_NamespaceTemplateSpec(*in, *out, s); err != nil {
 			return err
 		}
 	} else {
 		out.NamespaceTemplate = nil
 	}
 	out.Selector = in.Selector
-	if err := Convert_experiment_TrialTemplateSpec_To_v1alpha1_TrialTemplateSpec(&in.Template, &out.Template, s); err != nil {
+	if err := Convert_hub_TrialTemplateSpec_To_v1alpha1_TrialTemplateSpec(&in.Template, &out.Template, s); err != nil {
 		return err
 	}
 	return nil
 }
 
-// Convert_experiment_ExperimentSpec_To_v1alpha1_ExperimentSpec is an autogenerated conversion function.
-func Convert_experiment_ExperimentSpec_To_v1alpha1_ExperimentSpec(in *experiment.ExperimentSpec, out *ExperimentSpec, s conversion.Scope) error {
-	return autoConvert_experiment_ExperimentSpec_To_v1alpha1_ExperimentSpec(in, out, s)
+// Convert_hub_ExperimentSpec_To_v1alpha1_ExperimentSpec is an autogenerated conversion function.
+func Convert_hub_ExperimentSpec_To_v1alpha1_ExperimentSpec(in *hub.ExperimentSpec, out *ExperimentSpec, s conversion.Scope) error {
+	return autoConvert_hub_ExperimentSpec_To_v1alpha1_ExperimentSpec(in, out, s)
 }
 
-func autoConvert_v1alpha1_ExperimentStatus_To_experiment_ExperimentStatus(in *ExperimentStatus, out *experiment.ExperimentStatus, s conversion.Scope) error {
+func autoConvert_v1alpha1_ExperimentStatus_To_hub_ExperimentStatus(in *ExperimentStatus, out *hub.ExperimentStatus, s conversion.Scope) error {
 	out.Phase = in.Phase
 	out.ActiveTrials = in.ActiveTrials
 	return nil
 }
 
-// Convert_v1alpha1_ExperimentStatus_To_experiment_ExperimentStatus is an autogenerated conversion function.
-func Convert_v1alpha1_ExperimentStatus_To_experiment_ExperimentStatus(in *ExperimentStatus, out *experiment.ExperimentStatus, s conversion.Scope) error {
-	return autoConvert_v1alpha1_ExperimentStatus_To_experiment_ExperimentStatus(in, out, s)
+// Convert_v1alpha1_ExperimentStatus_To_hub_ExperimentStatus is an autogenerated conversion function.
+func Convert_v1alpha1_ExperimentStatus_To_hub_ExperimentStatus(in *ExperimentStatus, out *hub.ExperimentStatus, s conversion.Scope) error {
+	return autoConvert_v1alpha1_ExperimentStatus_To_hub_ExperimentStatus(in, out, s)
 }
 
-func autoConvert_experiment_ExperimentStatus_To_v1alpha1_ExperimentStatus(in *experiment.ExperimentStatus, out *ExperimentStatus, s conversion.Scope) error {
+func autoConvert_hub_ExperimentStatus_To_v1alpha1_ExperimentStatus(in *hub.ExperimentStatus, out *ExperimentStatus, s conversion.Scope) error {
 	out.Phase = in.Phase
 	out.ActiveTrials = in.ActiveTrials
 	return nil
 }
 
-// Convert_experiment_ExperimentStatus_To_v1alpha1_ExperimentStatus is an autogenerated conversion function.
-func Convert_experiment_ExperimentStatus_To_v1alpha1_ExperimentStatus(in *experiment.ExperimentStatus, out *ExperimentStatus, s conversion.Scope) error {
-	return autoConvert_experiment_ExperimentStatus_To_v1alpha1_ExperimentStatus(in, out, s)
+// Convert_hub_ExperimentStatus_To_v1alpha1_ExperimentStatus is an autogenerated conversion function.
+func Convert_hub_ExperimentStatus_To_v1alpha1_ExperimentStatus(in *hub.ExperimentStatus, out *ExperimentStatus, s conversion.Scope) error {
+	return autoConvert_hub_ExperimentStatus_To_v1alpha1_ExperimentStatus(in, out, s)
 }
 
-func autoConvert_v1alpha1_HelmValue_To_trial_HelmValue(in *HelmValue, out *trial.HelmValue, s conversion.Scope) error {
+func autoConvert_v1alpha1_HelmValue_To_hub_HelmValue(in *HelmValue, out *hub.HelmValue, s conversion.Scope) error {
 	out.Name = in.Name
 	out.ForceString = in.ForceString
 	out.Value = in.Value
 	if in.ValueFrom != nil {
 		in, out := &in.ValueFrom, &out.ValueFrom
-		*out = new(trial.HelmValueSource)
-		if err := Convert_v1alpha1_HelmValueSource_To_trial_HelmValueSource(*in, *out, s); err != nil {
+		*out = new(hub.HelmValueSource)
+		if err := Convert_v1alpha1_HelmValueSource_To_hub_HelmValueSource(*in, *out, s); err != nil {
 			return err
 		}
 	} else {
@@ -655,19 +716,19 @@ func autoConvert_v1alpha1_HelmValue_To_trial_HelmValue(in *HelmValue, out *trial
 	return nil
 }
 
-// Convert_v1alpha1_HelmValue_To_trial_HelmValue is an autogenerated conversion function.
-func Convert_v1alpha1_HelmValue_To_trial_HelmValue(in *HelmValue, out *trial.HelmValue, s conversion.Scope) error {
-	return autoConvert_v1alpha1_HelmValue_To_trial_HelmValue(in, out, s)
+// Convert_v1alpha1_HelmValue_To_hub_HelmValue is an autogenerated conversion function.
+func Convert_v1alpha1_HelmValue_To_hub_HelmValue(in *HelmValue, out *hub.HelmValue, s conversion.Scope) error {
+	return autoConvert_v1alpha1_HelmValue_To_hub_HelmValue(in, out, s)
 }
 
-func autoConvert_trial_HelmValue_To_v1alpha1_HelmValue(in *trial.HelmValue, out *HelmValue, s conversion.Scope) error {
+func autoConvert_hub_HelmValue_To_v1alpha1_HelmValue(in *hub.HelmValue, out *HelmValue, s conversion.Scope) error {
 	out.Name = in.Name
 	out.ForceString = in.ForceString
 	out.Value = in.Value
 	if in.ValueFrom != nil {
 		in, out := &in.ValueFrom, &out.ValueFrom
 		*out = new(HelmValueSource)
-		if err := Convert_trial_HelmValueSource_To_v1alpha1_HelmValueSource(*in, *out, s); err != nil {
+		if err := Convert_hub_HelmValueSource_To_v1alpha1_HelmValueSource(*in, *out, s); err != nil {
 			return err
 		}
 	} else {
@@ -676,16 +737,16 @@ func autoConvert_trial_HelmValue_To_v1alpha1_HelmValue(in *trial.HelmValue, out 
 	return nil
 }
 
-// Convert_trial_HelmValue_To_v1alpha1_HelmValue is an autogenerated conversion function.
-func Convert_trial_HelmValue_To_v1alpha1_HelmValue(in *trial.HelmValue, out *HelmValue, s conversion.Scope) error {
-	return autoConvert_trial_HelmValue_To_v1alpha1_HelmValue(in, out, s)
+// Convert_hub_HelmValue_To_v1alpha1_HelmValue is an autogenerated conversion function.
+func Convert_hub_HelmValue_To_v1alpha1_HelmValue(in *hub.HelmValue, out *HelmValue, s conversion.Scope) error {
+	return autoConvert_hub_HelmValue_To_v1alpha1_HelmValue(in, out, s)
 }
 
-func autoConvert_v1alpha1_HelmValueSource_To_trial_HelmValueSource(in *HelmValueSource, out *trial.HelmValueSource, s conversion.Scope) error {
+func autoConvert_v1alpha1_HelmValueSource_To_hub_HelmValueSource(in *HelmValueSource, out *hub.HelmValueSource, s conversion.Scope) error {
 	if in.ParameterRef != nil {
 		in, out := &in.ParameterRef, &out.ParameterRef
-		*out = new(trial.ParameterSelector)
-		if err := Convert_v1alpha1_ParameterSelector_To_trial_ParameterSelector(*in, *out, s); err != nil {
+		*out = new(hub.ParameterSelector)
+		if err := Convert_v1alpha1_ParameterSelector_To_hub_ParameterSelector(*in, *out, s); err != nil {
 			return err
 		}
 	} else {
@@ -694,16 +755,16 @@ func autoConvert_v1alpha1_HelmValueSource_To_trial_HelmValueSource(in *HelmValue
 	return nil
 }
 
-// Convert_v1alpha1_HelmValueSource_To_trial_HelmValueSource is an autogenerated conversion function.
-func Convert_v1alpha1_HelmValueSource_To_trial_HelmValueSource(in *HelmValueSource, out *trial.HelmValueSource, s conversion.Scope) error {
-	return autoConvert_v1alpha1_HelmValueSource_To_trial_HelmValueSource(in, out, s)
+// Convert_v1alpha1_HelmValueSource_To_hub_HelmValueSource is an autogenerated conversion function.
+func Convert_v1alpha1_HelmValueSource_To_hub_HelmValueSource(in *HelmValueSource, out *hub.HelmValueSource, s conversion.Scope) error {
+	return autoConvert_v1alpha1_HelmValueSource_To_hub_HelmValueSource(in, out, s)
 }
 
-func autoConvert_trial_HelmValueSource_To_v1alpha1_HelmValueSource(in *trial.HelmValueSource, out *HelmValueSource, s conversion.Scope) error {
+func autoConvert_hub_HelmValueSource_To_v1alpha1_HelmValueSource(in *hub.HelmValueSource, out *HelmValueSource, s conversion.Scope) error {
 	if in.ParameterRef != nil {
 		in, out := &in.ParameterRef, &out.ParameterRef
 		*out = new(ParameterSelector)
-		if err := Convert_trial_ParameterSelector_To_v1alpha1_ParameterSelector(*in, *out, s); err != nil {
+		if err := Convert_hub_ParameterSelector_To_v1alpha1_ParameterSelector(*in, *out, s); err != nil {
 			return err
 		}
 	} else {
@@ -712,16 +773,16 @@ func autoConvert_trial_HelmValueSource_To_v1alpha1_HelmValueSource(in *trial.Hel
 	return nil
 }
 
-// Convert_trial_HelmValueSource_To_v1alpha1_HelmValueSource is an autogenerated conversion function.
-func Convert_trial_HelmValueSource_To_v1alpha1_HelmValueSource(in *trial.HelmValueSource, out *HelmValueSource, s conversion.Scope) error {
-	return autoConvert_trial_HelmValueSource_To_v1alpha1_HelmValueSource(in, out, s)
+// Convert_hub_HelmValueSource_To_v1alpha1_HelmValueSource is an autogenerated conversion function.
+func Convert_hub_HelmValueSource_To_v1alpha1_HelmValueSource(in *hub.HelmValueSource, out *HelmValueSource, s conversion.Scope) error {
+	return autoConvert_hub_HelmValueSource_To_v1alpha1_HelmValueSource(in, out, s)
 }
 
-func autoConvert_v1alpha1_HelmValuesFromSource_To_trial_HelmValuesFromSource(in *HelmValuesFromSource, out *trial.HelmValuesFromSource, s conversion.Scope) error {
+func autoConvert_v1alpha1_HelmValuesFromSource_To_hub_HelmValuesFromSource(in *HelmValuesFromSource, out *hub.HelmValuesFromSource, s conversion.Scope) error {
 	if in.ConfigMap != nil {
 		in, out := &in.ConfigMap, &out.ConfigMap
-		*out = new(trial.ConfigMapHelmValuesFromSource)
-		if err := Convert_v1alpha1_ConfigMapHelmValuesFromSource_To_trial_ConfigMapHelmValuesFromSource(*in, *out, s); err != nil {
+		*out = new(hub.ConfigMapHelmValuesFromSource)
+		if err := Convert_v1alpha1_ConfigMapHelmValuesFromSource_To_hub_ConfigMapHelmValuesFromSource(*in, *out, s); err != nil {
 			return err
 		}
 	} else {
@@ -730,16 +791,16 @@ func autoConvert_v1alpha1_HelmValuesFromSource_To_trial_HelmValuesFromSource(in 
 	return nil
 }
 
-// Convert_v1alpha1_HelmValuesFromSource_To_trial_HelmValuesFromSource is an autogenerated conversion function.
-func Convert_v1alpha1_HelmValuesFromSource_To_trial_HelmValuesFromSource(in *HelmValuesFromSource, out *trial.HelmValuesFromSource, s conversion.Scope) error {
-	return autoConvert_v1alpha1_HelmValuesFromSource_To_trial_HelmValuesFromSource(in, out, s)
+// Convert_v1alpha1_HelmValuesFromSource_To_hub_HelmValuesFromSource is an autogenerated conversion function.
+func Convert_v1alpha1_HelmValuesFromSource_To_hub_HelmValuesFromSource(in *HelmValuesFromSource, out *hub.HelmValuesFromSource, s conversion.Scope) error {
+	return autoConvert_v1alpha1_HelmValuesFromSource_To_hub_HelmValuesFromSource(in, out, s)
 }
 
-func autoConvert_trial_HelmValuesFromSource_To_v1alpha1_HelmValuesFromSource(in *trial.HelmValuesFromSource, out *HelmValuesFromSource, s conversion.Scope) error {
+func autoConvert_hub_HelmValuesFromSource_To_v1alpha1_HelmValuesFromSource(in *hub.HelmValuesFromSource, out *HelmValuesFromSource, s conversion.Scope) error {
 	if in.ConfigMap != nil {
 		in, out := &in.ConfigMap, &out.ConfigMap
 		*out = new(ConfigMapHelmValuesFromSource)
-		if err := Convert_trial_ConfigMapHelmValuesFromSource_To_v1alpha1_ConfigMapHelmValuesFromSource(*in, *out, s); err != nil {
+		if err := Convert_hub_ConfigMapHelmValuesFromSource_To_v1alpha1_ConfigMapHelmValuesFromSource(*in, *out, s); err != nil {
 			return err
 		}
 	} else {
@@ -748,15 +809,15 @@ func autoConvert_trial_HelmValuesFromSource_To_v1alpha1_HelmValuesFromSource(in 
 	return nil
 }
 
-// Convert_trial_HelmValuesFromSource_To_v1alpha1_HelmValuesFromSource is an autogenerated conversion function.
-func Convert_trial_HelmValuesFromSource_To_v1alpha1_HelmValuesFromSource(in *trial.HelmValuesFromSource, out *HelmValuesFromSource, s conversion.Scope) error {
-	return autoConvert_trial_HelmValuesFromSource_To_v1alpha1_HelmValuesFromSource(in, out, s)
+// Convert_hub_HelmValuesFromSource_To_v1alpha1_HelmValuesFromSource is an autogenerated conversion function.
+func Convert_hub_HelmValuesFromSource_To_v1alpha1_HelmValuesFromSource(in *hub.HelmValuesFromSource, out *HelmValuesFromSource, s conversion.Scope) error {
+	return autoConvert_hub_HelmValuesFromSource_To_v1alpha1_HelmValuesFromSource(in, out, s)
 }
 
-func autoConvert_v1alpha1_Metric_To_experiment_Metric(in *Metric, out *experiment.Metric, s conversion.Scope) error {
+func autoConvert_v1alpha1_Metric_To_hub_Metric(in *Metric, out *hub.Metric, s conversion.Scope) error {
 	out.Name = in.Name
 	out.Minimize = in.Minimize
-	out.Type = experiment.MetricType(in.Type)
+	out.Type = hub.MetricType(in.Type)
 	out.Query = in.Query
 	out.ErrorQuery = in.ErrorQuery
 	out.Scheme = in.Scheme
@@ -766,12 +827,12 @@ func autoConvert_v1alpha1_Metric_To_experiment_Metric(in *Metric, out *experimen
 	return nil
 }
 
-// Convert_v1alpha1_Metric_To_experiment_Metric is an autogenerated conversion function.
-func Convert_v1alpha1_Metric_To_experiment_Metric(in *Metric, out *experiment.Metric, s conversion.Scope) error {
-	return autoConvert_v1alpha1_Metric_To_experiment_Metric(in, out, s)
+// Convert_v1alpha1_Metric_To_hub_Metric is an autogenerated conversion function.
+func Convert_v1alpha1_Metric_To_hub_Metric(in *Metric, out *hub.Metric, s conversion.Scope) error {
+	return autoConvert_v1alpha1_Metric_To_hub_Metric(in, out, s)
 }
 
-func autoConvert_experiment_Metric_To_v1alpha1_Metric(in *experiment.Metric, out *Metric, s conversion.Scope) error {
+func autoConvert_hub_Metric_To_v1alpha1_Metric(in *hub.Metric, out *Metric, s conversion.Scope) error {
 	out.Name = in.Name
 	out.Minimize = in.Minimize
 	out.Type = MetricType(in.Type)
@@ -784,122 +845,122 @@ func autoConvert_experiment_Metric_To_v1alpha1_Metric(in *experiment.Metric, out
 	return nil
 }
 
-// Convert_experiment_Metric_To_v1alpha1_Metric is an autogenerated conversion function.
-func Convert_experiment_Metric_To_v1alpha1_Metric(in *experiment.Metric, out *Metric, s conversion.Scope) error {
-	return autoConvert_experiment_Metric_To_v1alpha1_Metric(in, out, s)
+// Convert_hub_Metric_To_v1alpha1_Metric is an autogenerated conversion function.
+func Convert_hub_Metric_To_v1alpha1_Metric(in *hub.Metric, out *Metric, s conversion.Scope) error {
+	return autoConvert_hub_Metric_To_v1alpha1_Metric(in, out, s)
 }
 
-func autoConvert_v1alpha1_NamespaceTemplateSpec_To_experiment_NamespaceTemplateSpec(in *NamespaceTemplateSpec, out *experiment.NamespaceTemplateSpec, s conversion.Scope) error {
+func autoConvert_v1alpha1_NamespaceTemplateSpec_To_hub_NamespaceTemplateSpec(in *NamespaceTemplateSpec, out *hub.NamespaceTemplateSpec, s conversion.Scope) error {
 	out.ObjectMeta = in.ObjectMeta
 	out.Spec = in.Spec
 	return nil
 }
 
-// Convert_v1alpha1_NamespaceTemplateSpec_To_experiment_NamespaceTemplateSpec is an autogenerated conversion function.
-func Convert_v1alpha1_NamespaceTemplateSpec_To_experiment_NamespaceTemplateSpec(in *NamespaceTemplateSpec, out *experiment.NamespaceTemplateSpec, s conversion.Scope) error {
-	return autoConvert_v1alpha1_NamespaceTemplateSpec_To_experiment_NamespaceTemplateSpec(in, out, s)
+// Convert_v1alpha1_NamespaceTemplateSpec_To_hub_NamespaceTemplateSpec is an autogenerated conversion function.
+func Convert_v1alpha1_NamespaceTemplateSpec_To_hub_NamespaceTemplateSpec(in *NamespaceTemplateSpec, out *hub.NamespaceTemplateSpec, s conversion.Scope) error {
+	return autoConvert_v1alpha1_NamespaceTemplateSpec_To_hub_NamespaceTemplateSpec(in, out, s)
 }
 
-func autoConvert_experiment_NamespaceTemplateSpec_To_v1alpha1_NamespaceTemplateSpec(in *experiment.NamespaceTemplateSpec, out *NamespaceTemplateSpec, s conversion.Scope) error {
+func autoConvert_hub_NamespaceTemplateSpec_To_v1alpha1_NamespaceTemplateSpec(in *hub.NamespaceTemplateSpec, out *NamespaceTemplateSpec, s conversion.Scope) error {
 	out.ObjectMeta = in.ObjectMeta
 	out.Spec = in.Spec
 	return nil
 }
 
-// Convert_experiment_NamespaceTemplateSpec_To_v1alpha1_NamespaceTemplateSpec is an autogenerated conversion function.
-func Convert_experiment_NamespaceTemplateSpec_To_v1alpha1_NamespaceTemplateSpec(in *experiment.NamespaceTemplateSpec, out *NamespaceTemplateSpec, s conversion.Scope) error {
-	return autoConvert_experiment_NamespaceTemplateSpec_To_v1alpha1_NamespaceTemplateSpec(in, out, s)
+// Convert_hub_NamespaceTemplateSpec_To_v1alpha1_NamespaceTemplateSpec is an autogenerated conversion function.
+func Convert_hub_NamespaceTemplateSpec_To_v1alpha1_NamespaceTemplateSpec(in *hub.NamespaceTemplateSpec, out *NamespaceTemplateSpec, s conversion.Scope) error {
+	return autoConvert_hub_NamespaceTemplateSpec_To_v1alpha1_NamespaceTemplateSpec(in, out, s)
 }
 
-func autoConvert_v1alpha1_Optimization_To_experiment_Optimization(in *Optimization, out *experiment.Optimization, s conversion.Scope) error {
+func autoConvert_v1alpha1_Optimization_To_hub_Optimization(in *Optimization, out *hub.Optimization, s conversion.Scope) error {
 	out.Name = in.Name
 	out.Value = in.Value
 	return nil
 }
 
-// Convert_v1alpha1_Optimization_To_experiment_Optimization is an autogenerated conversion function.
-func Convert_v1alpha1_Optimization_To_experiment_Optimization(in *Optimization, out *experiment.Optimization, s conversion.Scope) error {
-	return autoConvert_v1alpha1_Optimization_To_experiment_Optimization(in, out, s)
+// Convert_v1alpha1_Optimization_To_hub_Optimization is an autogenerated conversion function.
+func Convert_v1alpha1_Optimization_To_hub_Optimization(in *Optimization, out *hub.Optimization, s conversion.Scope) error {
+	return autoConvert_v1alpha1_Optimization_To_hub_Optimization(in, out, s)
 }
 
-func autoConvert_experiment_Optimization_To_v1alpha1_Optimization(in *experiment.Optimization, out *Optimization, s conversion.Scope) error {
+func autoConvert_hub_Optimization_To_v1alpha1_Optimization(in *hub.Optimization, out *Optimization, s conversion.Scope) error {
 	out.Name = in.Name
 	out.Value = in.Value
 	return nil
 }
 
-// Convert_experiment_Optimization_To_v1alpha1_Optimization is an autogenerated conversion function.
-func Convert_experiment_Optimization_To_v1alpha1_Optimization(in *experiment.Optimization, out *Optimization, s conversion.Scope) error {
-	return autoConvert_experiment_Optimization_To_v1alpha1_Optimization(in, out, s)
+// Convert_hub_Optimization_To_v1alpha1_Optimization is an autogenerated conversion function.
+func Convert_hub_Optimization_To_v1alpha1_Optimization(in *hub.Optimization, out *Optimization, s conversion.Scope) error {
+	return autoConvert_hub_Optimization_To_v1alpha1_Optimization(in, out, s)
 }
 
-func autoConvert_v1alpha1_OrderConstraint_To_experiment_OrderConstraint(in *OrderConstraint, out *experiment.OrderConstraint, s conversion.Scope) error {
+func autoConvert_v1alpha1_OrderConstraint_To_hub_OrderConstraint(in *OrderConstraint, out *hub.OrderConstraint, s conversion.Scope) error {
 	out.LowerParameter = in.LowerParameter
 	out.UpperParameter = in.UpperParameter
 	return nil
 }
 
-// Convert_v1alpha1_OrderConstraint_To_experiment_OrderConstraint is an autogenerated conversion function.
-func Convert_v1alpha1_OrderConstraint_To_experiment_OrderConstraint(in *OrderConstraint, out *experiment.OrderConstraint, s conversion.Scope) error {
-	return autoConvert_v1alpha1_OrderConstraint_To_experiment_OrderConstraint(in, out, s)
+// Convert_v1alpha1_OrderConstraint_To_hub_OrderConstraint is an autogenerated conversion function.
+func Convert_v1alpha1_OrderConstraint_To_hub_OrderConstraint(in *OrderConstraint, out *hub.OrderConstraint, s conversion.Scope) error {
+	return autoConvert_v1alpha1_OrderConstraint_To_hub_OrderConstraint(in, out, s)
 }
 
-func autoConvert_experiment_OrderConstraint_To_v1alpha1_OrderConstraint(in *experiment.OrderConstraint, out *OrderConstraint, s conversion.Scope) error {
+func autoConvert_hub_OrderConstraint_To_v1alpha1_OrderConstraint(in *hub.OrderConstraint, out *OrderConstraint, s conversion.Scope) error {
 	out.LowerParameter = in.LowerParameter
 	out.UpperParameter = in.UpperParameter
 	return nil
 }
 
-// Convert_experiment_OrderConstraint_To_v1alpha1_OrderConstraint is an autogenerated conversion function.
-func Convert_experiment_OrderConstraint_To_v1alpha1_OrderConstraint(in *experiment.OrderConstraint, out *OrderConstraint, s conversion.Scope) error {
-	return autoConvert_experiment_OrderConstraint_To_v1alpha1_OrderConstraint(in, out, s)
+// Convert_hub_OrderConstraint_To_v1alpha1_OrderConstraint is an autogenerated conversion function.
+func Convert_hub_OrderConstraint_To_v1alpha1_OrderConstraint(in *hub.OrderConstraint, out *OrderConstraint, s conversion.Scope) error {
+	return autoConvert_hub_OrderConstraint_To_v1alpha1_OrderConstraint(in, out, s)
 }
 
-func autoConvert_v1alpha1_Parameter_To_experiment_Parameter(in *Parameter, out *experiment.Parameter, s conversion.Scope) error {
+func autoConvert_v1alpha1_Parameter_To_hub_Parameter(in *Parameter, out *hub.Parameter, s conversion.Scope) error {
 	out.Name = in.Name
 	out.Min = in.Min
 	out.Max = in.Max
 	return nil
 }
 
-// Convert_v1alpha1_Parameter_To_experiment_Parameter is an autogenerated conversion function.
-func Convert_v1alpha1_Parameter_To_experiment_Parameter(in *Parameter, out *experiment.Parameter, s conversion.Scope) error {
-	return autoConvert_v1alpha1_Parameter_To_experiment_Parameter(in, out, s)
+// Convert_v1alpha1_Parameter_To_hub_Parameter is an autogenerated conversion function.
+func Convert_v1alpha1_Parameter_To_hub_Parameter(in *Parameter, out *hub.Parameter, s conversion.Scope) error {
+	return autoConvert_v1alpha1_Parameter_To_hub_Parameter(in, out, s)
 }
 
-func autoConvert_experiment_Parameter_To_v1alpha1_Parameter(in *experiment.Parameter, out *Parameter, s conversion.Scope) error {
+func autoConvert_hub_Parameter_To_v1alpha1_Parameter(in *hub.Parameter, out *Parameter, s conversion.Scope) error {
 	out.Name = in.Name
 	out.Min = in.Min
 	out.Max = in.Max
 	return nil
 }
 
-// Convert_experiment_Parameter_To_v1alpha1_Parameter is an autogenerated conversion function.
-func Convert_experiment_Parameter_To_v1alpha1_Parameter(in *experiment.Parameter, out *Parameter, s conversion.Scope) error {
-	return autoConvert_experiment_Parameter_To_v1alpha1_Parameter(in, out, s)
+// Convert_hub_Parameter_To_v1alpha1_Parameter is an autogenerated conversion function.
+func Convert_hub_Parameter_To_v1alpha1_Parameter(in *hub.Parameter, out *Parameter, s conversion.Scope) error {
+	return autoConvert_hub_Parameter_To_v1alpha1_Parameter(in, out, s)
 }
 
-func autoConvert_v1alpha1_ParameterSelector_To_trial_ParameterSelector(in *ParameterSelector, out *trial.ParameterSelector, s conversion.Scope) error {
+func autoConvert_v1alpha1_ParameterSelector_To_hub_ParameterSelector(in *ParameterSelector, out *hub.ParameterSelector, s conversion.Scope) error {
 	out.Name = in.Name
 	return nil
 }
 
-// Convert_v1alpha1_ParameterSelector_To_trial_ParameterSelector is an autogenerated conversion function.
-func Convert_v1alpha1_ParameterSelector_To_trial_ParameterSelector(in *ParameterSelector, out *trial.ParameterSelector, s conversion.Scope) error {
-	return autoConvert_v1alpha1_ParameterSelector_To_trial_ParameterSelector(in, out, s)
+// Convert_v1alpha1_ParameterSelector_To_hub_ParameterSelector is an autogenerated conversion function.
+func Convert_v1alpha1_ParameterSelector_To_hub_ParameterSelector(in *ParameterSelector, out *hub.ParameterSelector, s conversion.Scope) error {
+	return autoConvert_v1alpha1_ParameterSelector_To_hub_ParameterSelector(in, out, s)
 }
 
-func autoConvert_trial_ParameterSelector_To_v1alpha1_ParameterSelector(in *trial.ParameterSelector, out *ParameterSelector, s conversion.Scope) error {
+func autoConvert_hub_ParameterSelector_To_v1alpha1_ParameterSelector(in *hub.ParameterSelector, out *ParameterSelector, s conversion.Scope) error {
 	out.Name = in.Name
 	return nil
 }
 
-// Convert_trial_ParameterSelector_To_v1alpha1_ParameterSelector is an autogenerated conversion function.
-func Convert_trial_ParameterSelector_To_v1alpha1_ParameterSelector(in *trial.ParameterSelector, out *ParameterSelector, s conversion.Scope) error {
-	return autoConvert_trial_ParameterSelector_To_v1alpha1_ParameterSelector(in, out, s)
+// Convert_hub_ParameterSelector_To_v1alpha1_ParameterSelector is an autogenerated conversion function.
+func Convert_hub_ParameterSelector_To_v1alpha1_ParameterSelector(in *hub.ParameterSelector, out *ParameterSelector, s conversion.Scope) error {
+	return autoConvert_hub_ParameterSelector_To_v1alpha1_ParameterSelector(in, out, s)
 }
 
-func autoConvert_v1alpha1_PatchOperation_To_trial_PatchOperation(in *PatchOperation, out *trial.PatchOperation, s conversion.Scope) error {
+func autoConvert_v1alpha1_PatchOperation_To_hub_PatchOperation(in *PatchOperation, out *hub.PatchOperation, s conversion.Scope) error {
 	out.TargetRef = in.TargetRef
 	out.PatchType = types.PatchType(in.PatchType)
 	if err := conversion.Convert_Slice_byte_To_Slice_byte(&in.Data, &out.Data, s); err != nil {
@@ -909,12 +970,12 @@ func autoConvert_v1alpha1_PatchOperation_To_trial_PatchOperation(in *PatchOperat
 	return nil
 }
 
-// Convert_v1alpha1_PatchOperation_To_trial_PatchOperation is an autogenerated conversion function.
-func Convert_v1alpha1_PatchOperation_To_trial_PatchOperation(in *PatchOperation, out *trial.PatchOperation, s conversion.Scope) error {
-	return autoConvert_v1alpha1_PatchOperation_To_trial_PatchOperation(in, out, s)
+// Convert_v1alpha1_PatchOperation_To_hub_PatchOperation is an autogenerated conversion function.
+func Convert_v1alpha1_PatchOperation_To_hub_PatchOperation(in *PatchOperation, out *hub.PatchOperation, s conversion.Scope) error {
+	return autoConvert_v1alpha1_PatchOperation_To_hub_PatchOperation(in, out, s)
 }
 
-func autoConvert_trial_PatchOperation_To_v1alpha1_PatchOperation(in *trial.PatchOperation, out *PatchOperation, s conversion.Scope) error {
+func autoConvert_hub_PatchOperation_To_v1alpha1_PatchOperation(in *hub.PatchOperation, out *PatchOperation, s conversion.Scope) error {
 	out.TargetRef = in.TargetRef
 	out.PatchType = types.PatchType(in.PatchType)
 	if err := conversion.Convert_Slice_byte_To_Slice_byte(&in.Data, &out.Data, s); err != nil {
@@ -924,40 +985,40 @@ func autoConvert_trial_PatchOperation_To_v1alpha1_PatchOperation(in *trial.Patch
 	return nil
 }
 
-// Convert_trial_PatchOperation_To_v1alpha1_PatchOperation is an autogenerated conversion function.
-func Convert_trial_PatchOperation_To_v1alpha1_PatchOperation(in *trial.PatchOperation, out *PatchOperation, s conversion.Scope) error {
-	return autoConvert_trial_PatchOperation_To_v1alpha1_PatchOperation(in, out, s)
+// Convert_hub_PatchOperation_To_v1alpha1_PatchOperation is an autogenerated conversion function.
+func Convert_hub_PatchOperation_To_v1alpha1_PatchOperation(in *hub.PatchOperation, out *PatchOperation, s conversion.Scope) error {
+	return autoConvert_hub_PatchOperation_To_v1alpha1_PatchOperation(in, out, s)
 }
 
-func autoConvert_v1alpha1_PatchReadinessGate_To_experiment_PatchReadinessGate(in *PatchReadinessGate, out *experiment.PatchReadinessGate, s conversion.Scope) error {
+func autoConvert_v1alpha1_PatchReadinessGate_To_hub_PatchReadinessGate(in *PatchReadinessGate, out *hub.PatchReadinessGate, s conversion.Scope) error {
 	out.ConditionType = in.ConditionType
 	return nil
 }
 
-// Convert_v1alpha1_PatchReadinessGate_To_experiment_PatchReadinessGate is an autogenerated conversion function.
-func Convert_v1alpha1_PatchReadinessGate_To_experiment_PatchReadinessGate(in *PatchReadinessGate, out *experiment.PatchReadinessGate, s conversion.Scope) error {
-	return autoConvert_v1alpha1_PatchReadinessGate_To_experiment_PatchReadinessGate(in, out, s)
+// Convert_v1alpha1_PatchReadinessGate_To_hub_PatchReadinessGate is an autogenerated conversion function.
+func Convert_v1alpha1_PatchReadinessGate_To_hub_PatchReadinessGate(in *PatchReadinessGate, out *hub.PatchReadinessGate, s conversion.Scope) error {
+	return autoConvert_v1alpha1_PatchReadinessGate_To_hub_PatchReadinessGate(in, out, s)
 }
 
-func autoConvert_experiment_PatchReadinessGate_To_v1alpha1_PatchReadinessGate(in *experiment.PatchReadinessGate, out *PatchReadinessGate, s conversion.Scope) error {
+func autoConvert_hub_PatchReadinessGate_To_v1alpha1_PatchReadinessGate(in *hub.PatchReadinessGate, out *PatchReadinessGate, s conversion.Scope) error {
 	out.ConditionType = in.ConditionType
 	return nil
 }
 
-// Convert_experiment_PatchReadinessGate_To_v1alpha1_PatchReadinessGate is an autogenerated conversion function.
-func Convert_experiment_PatchReadinessGate_To_v1alpha1_PatchReadinessGate(in *experiment.PatchReadinessGate, out *PatchReadinessGate, s conversion.Scope) error {
-	return autoConvert_experiment_PatchReadinessGate_To_v1alpha1_PatchReadinessGate(in, out, s)
+// Convert_hub_PatchReadinessGate_To_v1alpha1_PatchReadinessGate is an autogenerated conversion function.
+func Convert_hub_PatchReadinessGate_To_v1alpha1_PatchReadinessGate(in *hub.PatchReadinessGate, out *PatchReadinessGate, s conversion.Scope) error {
+	return autoConvert_hub_PatchReadinessGate_To_v1alpha1_PatchReadinessGate(in, out, s)
 }
 
-func autoConvert_v1alpha1_PatchTemplate_To_experiment_PatchTemplate(in *PatchTemplate, out *experiment.PatchTemplate, s conversion.Scope) error {
-	out.Type = experiment.PatchType(in.Type)
+func autoConvert_v1alpha1_PatchTemplate_To_hub_PatchTemplate(in *PatchTemplate, out *hub.PatchTemplate, s conversion.Scope) error {
+	out.Type = hub.PatchType(in.Type)
 	out.Patch = in.Patch
 	out.TargetRef = in.TargetRef
 	if in.ReadinessGates != nil {
 		in, out := &in.ReadinessGates, &out.ReadinessGates
-		*out = make([]experiment.PatchReadinessGate, len(*in))
+		*out = make([]hub.PatchReadinessGate, len(*in))
 		for i := range *in {
-			if err := Convert_v1alpha1_PatchReadinessGate_To_experiment_PatchReadinessGate(&(*in)[i], &(*out)[i], s); err != nil {
+			if err := Convert_v1alpha1_PatchReadinessGate_To_hub_PatchReadinessGate(&(*in)[i], &(*out)[i], s); err != nil {
 				return err
 			}
 		}
@@ -967,12 +1028,12 @@ func autoConvert_v1alpha1_PatchTemplate_To_experiment_PatchTemplate(in *PatchTem
 	return nil
 }
 
-// Convert_v1alpha1_PatchTemplate_To_experiment_PatchTemplate is an autogenerated conversion function.
-func Convert_v1alpha1_PatchTemplate_To_experiment_PatchTemplate(in *PatchTemplate, out *experiment.PatchTemplate, s conversion.Scope) error {
-	return autoConvert_v1alpha1_PatchTemplate_To_experiment_PatchTemplate(in, out, s)
+// Convert_v1alpha1_PatchTemplate_To_hub_PatchTemplate is an autogenerated conversion function.
+func Convert_v1alpha1_PatchTemplate_To_hub_PatchTemplate(in *PatchTemplate, out *hub.PatchTemplate, s conversion.Scope) error {
+	return autoConvert_v1alpha1_PatchTemplate_To_hub_PatchTemplate(in, out, s)
 }
 
-func autoConvert_experiment_PatchTemplate_To_v1alpha1_PatchTemplate(in *experiment.PatchTemplate, out *PatchTemplate, s conversion.Scope) error {
+func autoConvert_hub_PatchTemplate_To_v1alpha1_PatchTemplate(in *hub.PatchTemplate, out *PatchTemplate, s conversion.Scope) error {
 	out.Type = PatchType(in.Type)
 	out.Patch = in.Patch
 	out.TargetRef = in.TargetRef
@@ -980,7 +1041,7 @@ func autoConvert_experiment_PatchTemplate_To_v1alpha1_PatchTemplate(in *experime
 		in, out := &in.ReadinessGates, &out.ReadinessGates
 		*out = make([]PatchReadinessGate, len(*in))
 		for i := range *in {
-			if err := Convert_experiment_PatchReadinessGate_To_v1alpha1_PatchReadinessGate(&(*in)[i], &(*out)[i], s); err != nil {
+			if err := Convert_hub_PatchReadinessGate_To_v1alpha1_PatchReadinessGate(&(*in)[i], &(*out)[i], s); err != nil {
 				return err
 			}
 		}
@@ -990,12 +1051,12 @@ func autoConvert_experiment_PatchTemplate_To_v1alpha1_PatchTemplate(in *experime
 	return nil
 }
 
-// Convert_experiment_PatchTemplate_To_v1alpha1_PatchTemplate is an autogenerated conversion function.
-func Convert_experiment_PatchTemplate_To_v1alpha1_PatchTemplate(in *experiment.PatchTemplate, out *PatchTemplate, s conversion.Scope) error {
-	return autoConvert_experiment_PatchTemplate_To_v1alpha1_PatchTemplate(in, out, s)
+// Convert_hub_PatchTemplate_To_v1alpha1_PatchTemplate is an autogenerated conversion function.
+func Convert_hub_PatchTemplate_To_v1alpha1_PatchTemplate(in *hub.PatchTemplate, out *PatchTemplate, s conversion.Scope) error {
+	return autoConvert_hub_PatchTemplate_To_v1alpha1_PatchTemplate(in, out, s)
 }
 
-func autoConvert_v1alpha1_ReadinessCheck_To_trial_ReadinessCheck(in *ReadinessCheck, out *trial.ReadinessCheck, s conversion.Scope) error {
+func autoConvert_v1alpha1_ReadinessCheck_To_hub_ReadinessCheck(in *ReadinessCheck, out *hub.ReadinessCheck, s conversion.Scope) error {
 	out.TargetRef = in.TargetRef
 	out.Selector = in.Selector
 	out.ConditionTypes = in.ConditionTypes
@@ -1006,12 +1067,12 @@ func autoConvert_v1alpha1_ReadinessCheck_To_trial_ReadinessCheck(in *ReadinessCh
 	return nil
 }
 
-// Convert_v1alpha1_ReadinessCheck_To_trial_ReadinessCheck is an autogenerated conversion function.
-func Convert_v1alpha1_ReadinessCheck_To_trial_ReadinessCheck(in *ReadinessCheck, out *trial.ReadinessCheck, s conversion.Scope) error {
-	return autoConvert_v1alpha1_ReadinessCheck_To_trial_ReadinessCheck(in, out, s)
+// Convert_v1alpha1_ReadinessCheck_To_hub_ReadinessCheck is an autogenerated conversion function.
+func Convert_v1alpha1_ReadinessCheck_To_hub_ReadinessCheck(in *ReadinessCheck, out *hub.ReadinessCheck, s conversion.Scope) error {
+	return autoConvert_v1alpha1_ReadinessCheck_To_hub_ReadinessCheck(in, out, s)
 }
 
-func autoConvert_trial_ReadinessCheck_To_v1alpha1_ReadinessCheck(in *trial.ReadinessCheck, out *ReadinessCheck, s conversion.Scope) error {
+func autoConvert_hub_ReadinessCheck_To_v1alpha1_ReadinessCheck(in *hub.ReadinessCheck, out *ReadinessCheck, s conversion.Scope) error {
 	out.TargetRef = in.TargetRef
 	out.Selector = in.Selector
 	out.ConditionTypes = in.ConditionTypes
@@ -1022,12 +1083,12 @@ func autoConvert_trial_ReadinessCheck_To_v1alpha1_ReadinessCheck(in *trial.Readi
 	return nil
 }
 
-// Convert_trial_ReadinessCheck_To_v1alpha1_ReadinessCheck is an autogenerated conversion function.
-func Convert_trial_ReadinessCheck_To_v1alpha1_ReadinessCheck(in *trial.ReadinessCheck, out *ReadinessCheck, s conversion.Scope) error {
-	return autoConvert_trial_ReadinessCheck_To_v1alpha1_ReadinessCheck(in, out, s)
+// Convert_hub_ReadinessCheck_To_v1alpha1_ReadinessCheck is an autogenerated conversion function.
+func Convert_hub_ReadinessCheck_To_v1alpha1_ReadinessCheck(in *hub.ReadinessCheck, out *ReadinessCheck, s conversion.Scope) error {
+	return autoConvert_hub_ReadinessCheck_To_v1alpha1_ReadinessCheck(in, out, s)
 }
 
-func autoConvert_v1alpha1_SetupTask_To_trial_SetupTask(in *SetupTask, out *trial.SetupTask, s conversion.Scope) error {
+func autoConvert_v1alpha1_SetupTask_To_hub_SetupTask(in *SetupTask, out *hub.SetupTask, s conversion.Scope) error {
 	out.Name = in.Name
 	out.Image = in.Image
 	out.SkipCreate = in.SkipCreate
@@ -1037,9 +1098,9 @@ func autoConvert_v1alpha1_SetupTask_To_trial_SetupTask(in *SetupTask, out *trial
 	out.HelmChartVersion = in.HelmChartVersion
 	if in.HelmValues != nil {
 		in, out := &in.HelmValues, &out.HelmValues
-		*out = make([]trial.HelmValue, len(*in))
+		*out = make([]hub.HelmValue, len(*in))
 		for i := range *in {
-			if err := Convert_v1alpha1_HelmValue_To_trial_HelmValue(&(*in)[i], &(*out)[i], s); err != nil {
+			if err := Convert_v1alpha1_HelmValue_To_hub_HelmValue(&(*in)[i], &(*out)[i], s); err != nil {
 				return err
 			}
 		}
@@ -1048,9 +1109,9 @@ func autoConvert_v1alpha1_SetupTask_To_trial_SetupTask(in *SetupTask, out *trial
 	}
 	if in.HelmValuesFrom != nil {
 		in, out := &in.HelmValuesFrom, &out.HelmValuesFrom
-		*out = make([]trial.HelmValuesFromSource, len(*in))
+		*out = make([]hub.HelmValuesFromSource, len(*in))
 		for i := range *in {
-			if err := Convert_v1alpha1_HelmValuesFromSource_To_trial_HelmValuesFromSource(&(*in)[i], &(*out)[i], s); err != nil {
+			if err := Convert_v1alpha1_HelmValuesFromSource_To_hub_HelmValuesFromSource(&(*in)[i], &(*out)[i], s); err != nil {
 				return err
 			}
 		}
@@ -1060,12 +1121,12 @@ func autoConvert_v1alpha1_SetupTask_To_trial_SetupTask(in *SetupTask, out *trial
 	return nil
 }
 
-// Convert_v1alpha1_SetupTask_To_trial_SetupTask is an autogenerated conversion function.
-func Convert_v1alpha1_SetupTask_To_trial_SetupTask(in *SetupTask, out *trial.SetupTask, s conversion.Scope) error {
-	return autoConvert_v1alpha1_SetupTask_To_trial_SetupTask(in, out, s)
+// Convert_v1alpha1_SetupTask_To_hub_SetupTask is an autogenerated conversion function.
+func Convert_v1alpha1_SetupTask_To_hub_SetupTask(in *SetupTask, out *hub.SetupTask, s conversion.Scope) error {
+	return autoConvert_v1alpha1_SetupTask_To_hub_SetupTask(in, out, s)
 }
 
-func autoConvert_trial_SetupTask_To_v1alpha1_SetupTask(in *trial.SetupTask, out *SetupTask, s conversion.Scope) error {
+func autoConvert_hub_SetupTask_To_v1alpha1_SetupTask(in *hub.SetupTask, out *SetupTask, s conversion.Scope) error {
 	out.Name = in.Name
 	out.Image = in.Image
 	out.SkipCreate = in.SkipCreate
@@ -1077,7 +1138,7 @@ func autoConvert_trial_SetupTask_To_v1alpha1_SetupTask(in *trial.SetupTask, out 
 		in, out := &in.HelmValues, &out.HelmValues
 		*out = make([]HelmValue, len(*in))
 		for i := range *in {
-			if err := Convert_trial_HelmValue_To_v1alpha1_HelmValue(&(*in)[i], &(*out)[i], s); err != nil {
+			if err := Convert_hub_HelmValue_To_v1alpha1_HelmValue(&(*in)[i], &(*out)[i], s); err != nil {
 				return err
 			}
 		}
@@ -1088,7 +1149,7 @@ func autoConvert_trial_SetupTask_To_v1alpha1_SetupTask(in *trial.SetupTask, out 
 		in, out := &in.HelmValuesFrom, &out.HelmValuesFrom
 		*out = make([]HelmValuesFromSource, len(*in))
 		for i := range *in {
-			if err := Convert_trial_HelmValuesFromSource_To_v1alpha1_HelmValuesFromSource(&(*in)[i], &(*out)[i], s); err != nil {
+			if err := Convert_hub_HelmValuesFromSource_To_v1alpha1_HelmValuesFromSource(&(*in)[i], &(*out)[i], s); err != nil {
 				return err
 			}
 		}
@@ -1098,19 +1159,19 @@ func autoConvert_trial_SetupTask_To_v1alpha1_SetupTask(in *trial.SetupTask, out 
 	return nil
 }
 
-// Convert_trial_SetupTask_To_v1alpha1_SetupTask is an autogenerated conversion function.
-func Convert_trial_SetupTask_To_v1alpha1_SetupTask(in *trial.SetupTask, out *SetupTask, s conversion.Scope) error {
-	return autoConvert_trial_SetupTask_To_v1alpha1_SetupTask(in, out, s)
+// Convert_hub_SetupTask_To_v1alpha1_SetupTask is an autogenerated conversion function.
+func Convert_hub_SetupTask_To_v1alpha1_SetupTask(in *hub.SetupTask, out *SetupTask, s conversion.Scope) error {
+	return autoConvert_hub_SetupTask_To_v1alpha1_SetupTask(in, out, s)
 }
 
-func autoConvert_v1alpha1_SumConstraint_To_experiment_SumConstraint(in *SumConstraint, out *experiment.SumConstraint, s conversion.Scope) error {
+func autoConvert_v1alpha1_SumConstraint_To_hub_SumConstraint(in *SumConstraint, out *hub.SumConstraint, s conversion.Scope) error {
 	out.Bound = in.Bound
 	out.IsUpperBound = in.IsUpperBound
 	if in.Parameters != nil {
 		in, out := &in.Parameters, &out.Parameters
-		*out = make([]experiment.SumConstraintParameter, len(*in))
+		*out = make([]hub.SumConstraintParameter, len(*in))
 		for i := range *in {
-			if err := Convert_v1alpha1_SumConstraintParameter_To_experiment_SumConstraintParameter(&(*in)[i], &(*out)[i], s); err != nil {
+			if err := Convert_v1alpha1_SumConstraintParameter_To_hub_SumConstraintParameter(&(*in)[i], &(*out)[i], s); err != nil {
 				return err
 			}
 		}
@@ -1120,19 +1181,19 @@ func autoConvert_v1alpha1_SumConstraint_To_experiment_SumConstraint(in *SumConst
 	return nil
 }
 
-// Convert_v1alpha1_SumConstraint_To_experiment_SumConstraint is an autogenerated conversion function.
-func Convert_v1alpha1_SumConstraint_To_experiment_SumConstraint(in *SumConstraint, out *experiment.SumConstraint, s conversion.Scope) error {
-	return autoConvert_v1alpha1_SumConstraint_To_experiment_SumConstraint(in, out, s)
+// Convert_v1alpha1_SumConstraint_To_hub_SumConstraint is an autogenerated conversion function.
+func Convert_v1alpha1_SumConstraint_To_hub_SumConstraint(in *SumConstraint, out *hub.SumConstraint, s conversion.Scope) error {
+	return autoConvert_v1alpha1_SumConstraint_To_hub_SumConstraint(in, out, s)
 }
 
-func autoConvert_experiment_SumConstraint_To_v1alpha1_SumConstraint(in *experiment.SumConstraint, out *SumConstraint, s conversion.Scope) error {
+func autoConvert_hub_SumConstraint_To_v1alpha1_SumConstraint(in *hub.SumConstraint, out *SumConstraint, s conversion.Scope) error {
 	out.Bound = in.Bound
 	out.IsUpperBound = in.IsUpperBound
 	if in.Parameters != nil {
 		in, out := &in.Parameters, &out.Parameters
 		*out = make([]SumConstraintParameter, len(*in))
 		for i := range *in {
-			if err := Convert_experiment_SumConstraintParameter_To_v1alpha1_SumConstraintParameter(&(*in)[i], &(*out)[i], s); err != nil {
+			if err := Convert_hub_SumConstraintParameter_To_v1alpha1_SumConstraintParameter(&(*in)[i], &(*out)[i], s); err != nil {
 				return err
 			}
 		}
@@ -1142,67 +1203,67 @@ func autoConvert_experiment_SumConstraint_To_v1alpha1_SumConstraint(in *experime
 	return nil
 }
 
-// Convert_experiment_SumConstraint_To_v1alpha1_SumConstraint is an autogenerated conversion function.
-func Convert_experiment_SumConstraint_To_v1alpha1_SumConstraint(in *experiment.SumConstraint, out *SumConstraint, s conversion.Scope) error {
-	return autoConvert_experiment_SumConstraint_To_v1alpha1_SumConstraint(in, out, s)
+// Convert_hub_SumConstraint_To_v1alpha1_SumConstraint is an autogenerated conversion function.
+func Convert_hub_SumConstraint_To_v1alpha1_SumConstraint(in *hub.SumConstraint, out *SumConstraint, s conversion.Scope) error {
+	return autoConvert_hub_SumConstraint_To_v1alpha1_SumConstraint(in, out, s)
 }
 
-func autoConvert_v1alpha1_SumConstraintParameter_To_experiment_SumConstraintParameter(in *SumConstraintParameter, out *experiment.SumConstraintParameter, s conversion.Scope) error {
+func autoConvert_v1alpha1_SumConstraintParameter_To_hub_SumConstraintParameter(in *SumConstraintParameter, out *hub.SumConstraintParameter, s conversion.Scope) error {
 	out.Name = in.Name
 	out.Weight = in.Weight
 	return nil
 }
 
-// Convert_v1alpha1_SumConstraintParameter_To_experiment_SumConstraintParameter is an autogenerated conversion function.
-func Convert_v1alpha1_SumConstraintParameter_To_experiment_SumConstraintParameter(in *SumConstraintParameter, out *experiment.SumConstraintParameter, s conversion.Scope) error {
-	return autoConvert_v1alpha1_SumConstraintParameter_To_experiment_SumConstraintParameter(in, out, s)
+// Convert_v1alpha1_SumConstraintParameter_To_hub_SumConstraintParameter is an autogenerated conversion function.
+func Convert_v1alpha1_SumConstraintParameter_To_hub_SumConstraintParameter(in *SumConstraintParameter, out *hub.SumConstraintParameter, s conversion.Scope) error {
+	return autoConvert_v1alpha1_SumConstraintParameter_To_hub_SumConstraintParameter(in, out, s)
 }
 
-func autoConvert_experiment_SumConstraintParameter_To_v1alpha1_SumConstraintParameter(in *experiment.SumConstraintParameter, out *SumConstraintParameter, s conversion.Scope) error {
+func autoConvert_hub_SumConstraintParameter_To_v1alpha1_SumConstraintParameter(in *hub.SumConstraintParameter, out *SumConstraintParameter, s conversion.Scope) error {
 	out.Name = in.Name
 	out.Weight = in.Weight
 	return nil
 }
 
-// Convert_experiment_SumConstraintParameter_To_v1alpha1_SumConstraintParameter is an autogenerated conversion function.
-func Convert_experiment_SumConstraintParameter_To_v1alpha1_SumConstraintParameter(in *experiment.SumConstraintParameter, out *SumConstraintParameter, s conversion.Scope) error {
-	return autoConvert_experiment_SumConstraintParameter_To_v1alpha1_SumConstraintParameter(in, out, s)
+// Convert_hub_SumConstraintParameter_To_v1alpha1_SumConstraintParameter is an autogenerated conversion function.
+func Convert_hub_SumConstraintParameter_To_v1alpha1_SumConstraintParameter(in *hub.SumConstraintParameter, out *SumConstraintParameter, s conversion.Scope) error {
+	return autoConvert_hub_SumConstraintParameter_To_v1alpha1_SumConstraintParameter(in, out, s)
 }
 
-func autoConvert_v1alpha1_Trial_To_trial_Trial(in *Trial, out *trial.Trial, s conversion.Scope) error {
+func autoConvert_v1alpha1_Trial_To_hub_Trial(in *Trial, out *hub.Trial, s conversion.Scope) error {
 	out.ObjectMeta = in.ObjectMeta
-	if err := Convert_v1alpha1_TrialSpec_To_trial_TrialSpec(&in.Spec, &out.Spec, s); err != nil {
+	if err := Convert_v1alpha1_TrialSpec_To_hub_TrialSpec(&in.Spec, &out.Spec, s); err != nil {
 		return err
 	}
-	if err := Convert_v1alpha1_TrialStatus_To_trial_TrialStatus(&in.Status, &out.Status, s); err != nil {
+	if err := Convert_v1alpha1_TrialStatus_To_hub_TrialStatus(&in.Status, &out.Status, s); err != nil {
 		return err
 	}
 	return nil
 }
 
-// Convert_v1alpha1_Trial_To_trial_Trial is an autogenerated conversion function.
-func Convert_v1alpha1_Trial_To_trial_Trial(in *Trial, out *trial.Trial, s conversion.Scope) error {
-	return autoConvert_v1alpha1_Trial_To_trial_Trial(in, out, s)
+// Convert_v1alpha1_Trial_To_hub_Trial is an autogenerated conversion function.
+func Convert_v1alpha1_Trial_To_hub_Trial(in *Trial, out *hub.Trial, s conversion.Scope) error {
+	return autoConvert_v1alpha1_Trial_To_hub_Trial(in, out, s)
 }
 
-func autoConvert_trial_Trial_To_v1alpha1_Trial(in *trial.Trial, out *Trial, s conversion.Scope) error {
+func autoConvert_hub_Trial_To_v1alpha1_Trial(in *hub.Trial, out *Trial, s conversion.Scope) error {
 	out.ObjectMeta = in.ObjectMeta
-	if err := Convert_trial_TrialSpec_To_v1alpha1_TrialSpec(&in.Spec, &out.Spec, s); err != nil {
+	if err := Convert_hub_TrialSpec_To_v1alpha1_TrialSpec(&in.Spec, &out.Spec, s); err != nil {
 		return err
 	}
-	if err := Convert_trial_TrialStatus_To_v1alpha1_TrialStatus(&in.Status, &out.Status, s); err != nil {
+	if err := Convert_hub_TrialStatus_To_v1alpha1_TrialStatus(&in.Status, &out.Status, s); err != nil {
 		return err
 	}
 	return nil
 }
 
-// Convert_trial_Trial_To_v1alpha1_Trial is an autogenerated conversion function.
-func Convert_trial_Trial_To_v1alpha1_Trial(in *trial.Trial, out *Trial, s conversion.Scope) error {
-	return autoConvert_trial_Trial_To_v1alpha1_Trial(in, out, s)
+// Convert_hub_Trial_To_v1alpha1_Trial is an autogenerated conversion function.
+func Convert_hub_Trial_To_v1alpha1_Trial(in *hub.Trial, out *Trial, s conversion.Scope) error {
+	return autoConvert_hub_Trial_To_v1alpha1_Trial(in, out, s)
 }
 
-func autoConvert_v1alpha1_TrialCondition_To_trial_TrialCondition(in *TrialCondition, out *trial.TrialCondition, s conversion.Scope) error {
-	out.Type = trial.TrialConditionType(in.Type)
+func autoConvert_v1alpha1_TrialCondition_To_hub_TrialCondition(in *TrialCondition, out *hub.TrialCondition, s conversion.Scope) error {
+	out.Type = hub.TrialConditionType(in.Type)
 	out.Status = v1.ConditionStatus(in.Status)
 	out.LastProbeTime = in.LastProbeTime
 	out.LastTransitionTime = in.LastTransitionTime
@@ -1211,12 +1272,12 @@ func autoConvert_v1alpha1_TrialCondition_To_trial_TrialCondition(in *TrialCondit
 	return nil
 }
 
-// Convert_v1alpha1_TrialCondition_To_trial_TrialCondition is an autogenerated conversion function.
-func Convert_v1alpha1_TrialCondition_To_trial_TrialCondition(in *TrialCondition, out *trial.TrialCondition, s conversion.Scope) error {
-	return autoConvert_v1alpha1_TrialCondition_To_trial_TrialCondition(in, out, s)
+// Convert_v1alpha1_TrialCondition_To_hub_TrialCondition is an autogenerated conversion function.
+func Convert_v1alpha1_TrialCondition_To_hub_TrialCondition(in *TrialCondition, out *hub.TrialCondition, s conversion.Scope) error {
+	return autoConvert_v1alpha1_TrialCondition_To_hub_TrialCondition(in, out, s)
 }
 
-func autoConvert_trial_TrialCondition_To_v1alpha1_TrialCondition(in *trial.TrialCondition, out *TrialCondition, s conversion.Scope) error {
+func autoConvert_hub_TrialCondition_To_v1alpha1_TrialCondition(in *hub.TrialCondition, out *TrialCondition, s conversion.Scope) error {
 	out.Type = TrialConditionType(in.Type)
 	out.Status = v1.ConditionStatus(in.Status)
 	out.LastProbeTime = in.LastProbeTime
@@ -1226,12 +1287,54 @@ func autoConvert_trial_TrialCondition_To_v1alpha1_TrialCondition(in *trial.Trial
 	return nil
 }
 
-// Convert_trial_TrialCondition_To_v1alpha1_TrialCondition is an autogenerated conversion function.
-func Convert_trial_TrialCondition_To_v1alpha1_TrialCondition(in *trial.TrialCondition, out *TrialCondition, s conversion.Scope) error {
-	return autoConvert_trial_TrialCondition_To_v1alpha1_TrialCondition(in, out, s)
+// Convert_hub_TrialCondition_To_v1alpha1_TrialCondition is an autogenerated conversion function.
+func Convert_hub_TrialCondition_To_v1alpha1_TrialCondition(in *hub.TrialCondition, out *TrialCondition, s conversion.Scope) error {
+	return autoConvert_hub_TrialCondition_To_v1alpha1_TrialCondition(in, out, s)
 }
 
-func autoConvert_v1alpha1_TrialReadinessGate_To_trial_TrialReadinessGate(in *TrialReadinessGate, out *trial.TrialReadinessGate, s conversion.Scope) error {
+func autoConvert_v1alpha1_TrialList_To_hub_TrialList(in *TrialList, out *hub.TrialList, s conversion.Scope) error {
+	out.ListMeta = in.ListMeta
+	if in.Items != nil {
+		in, out := &in.Items, &out.Items
+		*out = make([]hub.Trial, len(*in))
+		for i := range *in {
+			if err := Convert_v1alpha1_Trial_To_hub_Trial(&(*in)[i], &(*out)[i], s); err != nil {
+				return err
+			}
+		}
+	} else {
+		out.Items = nil
+	}
+	return nil
+}
+
+// Convert_v1alpha1_TrialList_To_hub_TrialList is an autogenerated conversion function.
+func Convert_v1alpha1_TrialList_To_hub_TrialList(in *TrialList, out *hub.TrialList, s conversion.Scope) error {
+	return autoConvert_v1alpha1_TrialList_To_hub_TrialList(in, out, s)
+}
+
+func autoConvert_hub_TrialList_To_v1alpha1_TrialList(in *hub.TrialList, out *TrialList, s conversion.Scope) error {
+	out.ListMeta = in.ListMeta
+	if in.Items != nil {
+		in, out := &in.Items, &out.Items
+		*out = make([]Trial, len(*in))
+		for i := range *in {
+			if err := Convert_hub_Trial_To_v1alpha1_Trial(&(*in)[i], &(*out)[i], s); err != nil {
+				return err
+			}
+		}
+	} else {
+		out.Items = nil
+	}
+	return nil
+}
+
+// Convert_hub_TrialList_To_v1alpha1_TrialList is an autogenerated conversion function.
+func Convert_hub_TrialList_To_v1alpha1_TrialList(in *hub.TrialList, out *TrialList, s conversion.Scope) error {
+	return autoConvert_hub_TrialList_To_v1alpha1_TrialList(in, out, s)
+}
+
+func autoConvert_v1alpha1_TrialReadinessGate_To_hub_TrialReadinessGate(in *TrialReadinessGate, out *hub.TrialReadinessGate, s conversion.Scope) error {
 	out.Kind = in.Kind
 	out.Name = in.Name
 	out.APIVersion = in.APIVersion
@@ -1243,12 +1346,12 @@ func autoConvert_v1alpha1_TrialReadinessGate_To_trial_TrialReadinessGate(in *Tri
 	return nil
 }
 
-// Convert_v1alpha1_TrialReadinessGate_To_trial_TrialReadinessGate is an autogenerated conversion function.
-func Convert_v1alpha1_TrialReadinessGate_To_trial_TrialReadinessGate(in *TrialReadinessGate, out *trial.TrialReadinessGate, s conversion.Scope) error {
-	return autoConvert_v1alpha1_TrialReadinessGate_To_trial_TrialReadinessGate(in, out, s)
+// Convert_v1alpha1_TrialReadinessGate_To_hub_TrialReadinessGate is an autogenerated conversion function.
+func Convert_v1alpha1_TrialReadinessGate_To_hub_TrialReadinessGate(in *TrialReadinessGate, out *hub.TrialReadinessGate, s conversion.Scope) error {
+	return autoConvert_v1alpha1_TrialReadinessGate_To_hub_TrialReadinessGate(in, out, s)
 }
 
-func autoConvert_trial_TrialReadinessGate_To_v1alpha1_TrialReadinessGate(in *trial.TrialReadinessGate, out *TrialReadinessGate, s conversion.Scope) error {
+func autoConvert_hub_TrialReadinessGate_To_v1alpha1_TrialReadinessGate(in *hub.TrialReadinessGate, out *TrialReadinessGate, s conversion.Scope) error {
 	out.Kind = in.Kind
 	out.Name = in.Name
 	out.APIVersion = in.APIVersion
@@ -1260,18 +1363,18 @@ func autoConvert_trial_TrialReadinessGate_To_v1alpha1_TrialReadinessGate(in *tri
 	return nil
 }
 
-// Convert_trial_TrialReadinessGate_To_v1alpha1_TrialReadinessGate is an autogenerated conversion function.
-func Convert_trial_TrialReadinessGate_To_v1alpha1_TrialReadinessGate(in *trial.TrialReadinessGate, out *TrialReadinessGate, s conversion.Scope) error {
-	return autoConvert_trial_TrialReadinessGate_To_v1alpha1_TrialReadinessGate(in, out, s)
+// Convert_hub_TrialReadinessGate_To_v1alpha1_TrialReadinessGate is an autogenerated conversion function.
+func Convert_hub_TrialReadinessGate_To_v1alpha1_TrialReadinessGate(in *hub.TrialReadinessGate, out *TrialReadinessGate, s conversion.Scope) error {
+	return autoConvert_hub_TrialReadinessGate_To_v1alpha1_TrialReadinessGate(in, out, s)
 }
 
-func autoConvert_v1alpha1_TrialSpec_To_trial_TrialSpec(in *TrialSpec, out *trial.TrialSpec, s conversion.Scope) error {
+func autoConvert_v1alpha1_TrialSpec_To_hub_TrialSpec(in *TrialSpec, out *hub.TrialSpec, s conversion.Scope) error {
 	out.ExperimentRef = in.ExperimentRef
 	if in.Assignments != nil {
 		in, out := &in.Assignments, &out.Assignments
-		*out = make([]trial.Assignment, len(*in))
+		*out = make([]hub.Assignment, len(*in))
 		for i := range *in {
-			if err := Convert_v1alpha1_Assignment_To_trial_Assignment(&(*in)[i], &(*out)[i], s); err != nil {
+			if err := Convert_v1alpha1_Assignment_To_hub_Assignment(&(*in)[i], &(*out)[i], s); err != nil {
 				return err
 			}
 		}
@@ -1287,9 +1390,9 @@ func autoConvert_v1alpha1_TrialSpec_To_trial_TrialSpec(in *TrialSpec, out *trial
 	out.TTLSecondsAfterFailure = in.TTLSecondsAfterFailure
 	if in.ReadinessGates != nil {
 		in, out := &in.ReadinessGates, &out.ReadinessGates
-		*out = make([]trial.TrialReadinessGate, len(*in))
+		*out = make([]hub.TrialReadinessGate, len(*in))
 		for i := range *in {
-			if err := Convert_v1alpha1_TrialReadinessGate_To_trial_TrialReadinessGate(&(*in)[i], &(*out)[i], s); err != nil {
+			if err := Convert_v1alpha1_TrialReadinessGate_To_hub_TrialReadinessGate(&(*in)[i], &(*out)[i], s); err != nil {
 				return err
 			}
 		}
@@ -1298,9 +1401,9 @@ func autoConvert_v1alpha1_TrialSpec_To_trial_TrialSpec(in *TrialSpec, out *trial
 	}
 	if in.PatchOperations != nil {
 		in, out := &in.PatchOperations, &out.PatchOperations
-		*out = make([]trial.PatchOperation, len(*in))
+		*out = make([]hub.PatchOperation, len(*in))
 		for i := range *in {
-			if err := Convert_v1alpha1_PatchOperation_To_trial_PatchOperation(&(*in)[i], &(*out)[i], s); err != nil {
+			if err := Convert_v1alpha1_PatchOperation_To_hub_PatchOperation(&(*in)[i], &(*out)[i], s); err != nil {
 				return err
 			}
 		}
@@ -1309,9 +1412,9 @@ func autoConvert_v1alpha1_TrialSpec_To_trial_TrialSpec(in *TrialSpec, out *trial
 	}
 	if in.ReadinessChecks != nil {
 		in, out := &in.ReadinessChecks, &out.ReadinessChecks
-		*out = make([]trial.ReadinessCheck, len(*in))
+		*out = make([]hub.ReadinessCheck, len(*in))
 		for i := range *in {
-			if err := Convert_v1alpha1_ReadinessCheck_To_trial_ReadinessCheck(&(*in)[i], &(*out)[i], s); err != nil {
+			if err := Convert_v1alpha1_ReadinessCheck_To_hub_ReadinessCheck(&(*in)[i], &(*out)[i], s); err != nil {
 				return err
 			}
 		}
@@ -1320,9 +1423,9 @@ func autoConvert_v1alpha1_TrialSpec_To_trial_TrialSpec(in *TrialSpec, out *trial
 	}
 	if in.Values != nil {
 		in, out := &in.Values, &out.Values
-		*out = make([]trial.Value, len(*in))
+		*out = make([]hub.Value, len(*in))
 		for i := range *in {
-			if err := Convert_v1alpha1_Value_To_trial_Value(&(*in)[i], &(*out)[i], s); err != nil {
+			if err := Convert_v1alpha1_Value_To_hub_Value(&(*in)[i], &(*out)[i], s); err != nil {
 				return err
 			}
 		}
@@ -1331,9 +1434,9 @@ func autoConvert_v1alpha1_TrialSpec_To_trial_TrialSpec(in *TrialSpec, out *trial
 	}
 	if in.SetupTasks != nil {
 		in, out := &in.SetupTasks, &out.SetupTasks
-		*out = make([]trial.SetupTask, len(*in))
+		*out = make([]hub.SetupTask, len(*in))
 		for i := range *in {
-			if err := Convert_v1alpha1_SetupTask_To_trial_SetupTask(&(*in)[i], &(*out)[i], s); err != nil {
+			if err := Convert_v1alpha1_SetupTask_To_hub_SetupTask(&(*in)[i], &(*out)[i], s); err != nil {
 				return err
 			}
 		}
@@ -1347,18 +1450,18 @@ func autoConvert_v1alpha1_TrialSpec_To_trial_TrialSpec(in *TrialSpec, out *trial
 	return nil
 }
 
-// Convert_v1alpha1_TrialSpec_To_trial_TrialSpec is an autogenerated conversion function.
-func Convert_v1alpha1_TrialSpec_To_trial_TrialSpec(in *TrialSpec, out *trial.TrialSpec, s conversion.Scope) error {
-	return autoConvert_v1alpha1_TrialSpec_To_trial_TrialSpec(in, out, s)
+// Convert_v1alpha1_TrialSpec_To_hub_TrialSpec is an autogenerated conversion function.
+func Convert_v1alpha1_TrialSpec_To_hub_TrialSpec(in *TrialSpec, out *hub.TrialSpec, s conversion.Scope) error {
+	return autoConvert_v1alpha1_TrialSpec_To_hub_TrialSpec(in, out, s)
 }
 
-func autoConvert_trial_TrialSpec_To_v1alpha1_TrialSpec(in *trial.TrialSpec, out *TrialSpec, s conversion.Scope) error {
+func autoConvert_hub_TrialSpec_To_v1alpha1_TrialSpec(in *hub.TrialSpec, out *TrialSpec, s conversion.Scope) error {
 	out.ExperimentRef = in.ExperimentRef
 	if in.Assignments != nil {
 		in, out := &in.Assignments, &out.Assignments
 		*out = make([]Assignment, len(*in))
 		for i := range *in {
-			if err := Convert_trial_Assignment_To_v1alpha1_Assignment(&(*in)[i], &(*out)[i], s); err != nil {
+			if err := Convert_hub_Assignment_To_v1alpha1_Assignment(&(*in)[i], &(*out)[i], s); err != nil {
 				return err
 			}
 		}
@@ -1376,7 +1479,7 @@ func autoConvert_trial_TrialSpec_To_v1alpha1_TrialSpec(in *trial.TrialSpec, out 
 		in, out := &in.ReadinessGates, &out.ReadinessGates
 		*out = make([]TrialReadinessGate, len(*in))
 		for i := range *in {
-			if err := Convert_trial_TrialReadinessGate_To_v1alpha1_TrialReadinessGate(&(*in)[i], &(*out)[i], s); err != nil {
+			if err := Convert_hub_TrialReadinessGate_To_v1alpha1_TrialReadinessGate(&(*in)[i], &(*out)[i], s); err != nil {
 				return err
 			}
 		}
@@ -1387,7 +1490,7 @@ func autoConvert_trial_TrialSpec_To_v1alpha1_TrialSpec(in *trial.TrialSpec, out 
 		in, out := &in.PatchOperations, &out.PatchOperations
 		*out = make([]PatchOperation, len(*in))
 		for i := range *in {
-			if err := Convert_trial_PatchOperation_To_v1alpha1_PatchOperation(&(*in)[i], &(*out)[i], s); err != nil {
+			if err := Convert_hub_PatchOperation_To_v1alpha1_PatchOperation(&(*in)[i], &(*out)[i], s); err != nil {
 				return err
 			}
 		}
@@ -1398,7 +1501,7 @@ func autoConvert_trial_TrialSpec_To_v1alpha1_TrialSpec(in *trial.TrialSpec, out 
 		in, out := &in.ReadinessChecks, &out.ReadinessChecks
 		*out = make([]ReadinessCheck, len(*in))
 		for i := range *in {
-			if err := Convert_trial_ReadinessCheck_To_v1alpha1_ReadinessCheck(&(*in)[i], &(*out)[i], s); err != nil {
+			if err := Convert_hub_ReadinessCheck_To_v1alpha1_ReadinessCheck(&(*in)[i], &(*out)[i], s); err != nil {
 				return err
 			}
 		}
@@ -1409,7 +1512,7 @@ func autoConvert_trial_TrialSpec_To_v1alpha1_TrialSpec(in *trial.TrialSpec, out 
 		in, out := &in.Values, &out.Values
 		*out = make([]Value, len(*in))
 		for i := range *in {
-			if err := Convert_trial_Value_To_v1alpha1_Value(&(*in)[i], &(*out)[i], s); err != nil {
+			if err := Convert_hub_Value_To_v1alpha1_Value(&(*in)[i], &(*out)[i], s); err != nil {
 				return err
 			}
 		}
@@ -1420,7 +1523,7 @@ func autoConvert_trial_TrialSpec_To_v1alpha1_TrialSpec(in *trial.TrialSpec, out 
 		in, out := &in.SetupTasks, &out.SetupTasks
 		*out = make([]SetupTask, len(*in))
 		for i := range *in {
-			if err := Convert_trial_SetupTask_To_v1alpha1_SetupTask(&(*in)[i], &(*out)[i], s); err != nil {
+			if err := Convert_hub_SetupTask_To_v1alpha1_SetupTask(&(*in)[i], &(*out)[i], s); err != nil {
 				return err
 			}
 		}
@@ -1434,12 +1537,12 @@ func autoConvert_trial_TrialSpec_To_v1alpha1_TrialSpec(in *trial.TrialSpec, out 
 	return nil
 }
 
-// Convert_trial_TrialSpec_To_v1alpha1_TrialSpec is an autogenerated conversion function.
-func Convert_trial_TrialSpec_To_v1alpha1_TrialSpec(in *trial.TrialSpec, out *TrialSpec, s conversion.Scope) error {
-	return autoConvert_trial_TrialSpec_To_v1alpha1_TrialSpec(in, out, s)
+// Convert_hub_TrialSpec_To_v1alpha1_TrialSpec is an autogenerated conversion function.
+func Convert_hub_TrialSpec_To_v1alpha1_TrialSpec(in *hub.TrialSpec, out *TrialSpec, s conversion.Scope) error {
+	return autoConvert_hub_TrialSpec_To_v1alpha1_TrialSpec(in, out, s)
 }
 
-func autoConvert_v1alpha1_TrialStatus_To_trial_TrialStatus(in *TrialStatus, out *trial.TrialStatus, s conversion.Scope) error {
+func autoConvert_v1alpha1_TrialStatus_To_hub_TrialStatus(in *TrialStatus, out *hub.TrialStatus, s conversion.Scope) error {
 	out.Phase = in.Phase
 	out.Assignments = in.Assignments
 	out.Values = in.Values
@@ -1447,9 +1550,9 @@ func autoConvert_v1alpha1_TrialStatus_To_trial_TrialStatus(in *TrialStatus, out 
 	out.CompletionTime = in.CompletionTime
 	if in.Conditions != nil {
 		in, out := &in.Conditions, &out.Conditions
-		*out = make([]trial.TrialCondition, len(*in))
+		*out = make([]hub.TrialCondition, len(*in))
 		for i := range *in {
-			if err := Convert_v1alpha1_TrialCondition_To_trial_TrialCondition(&(*in)[i], &(*out)[i], s); err != nil {
+			if err := Convert_v1alpha1_TrialCondition_To_hub_TrialCondition(&(*in)[i], &(*out)[i], s); err != nil {
 				return err
 			}
 		}
@@ -1459,12 +1562,12 @@ func autoConvert_v1alpha1_TrialStatus_To_trial_TrialStatus(in *TrialStatus, out 
 	return nil
 }
 
-// Convert_v1alpha1_TrialStatus_To_trial_TrialStatus is an autogenerated conversion function.
-func Convert_v1alpha1_TrialStatus_To_trial_TrialStatus(in *TrialStatus, out *trial.TrialStatus, s conversion.Scope) error {
-	return autoConvert_v1alpha1_TrialStatus_To_trial_TrialStatus(in, out, s)
+// Convert_v1alpha1_TrialStatus_To_hub_TrialStatus is an autogenerated conversion function.
+func Convert_v1alpha1_TrialStatus_To_hub_TrialStatus(in *TrialStatus, out *hub.TrialStatus, s conversion.Scope) error {
+	return autoConvert_v1alpha1_TrialStatus_To_hub_TrialStatus(in, out, s)
 }
 
-func autoConvert_trial_TrialStatus_To_v1alpha1_TrialStatus(in *trial.TrialStatus, out *TrialStatus, s conversion.Scope) error {
+func autoConvert_hub_TrialStatus_To_v1alpha1_TrialStatus(in *hub.TrialStatus, out *TrialStatus, s conversion.Scope) error {
 	out.Phase = in.Phase
 	out.Assignments = in.Assignments
 	out.Values = in.Values
@@ -1474,7 +1577,7 @@ func autoConvert_trial_TrialStatus_To_v1alpha1_TrialStatus(in *trial.TrialStatus
 		in, out := &in.Conditions, &out.Conditions
 		*out = make([]TrialCondition, len(*in))
 		for i := range *in {
-			if err := Convert_trial_TrialCondition_To_v1alpha1_TrialCondition(&(*in)[i], &(*out)[i], s); err != nil {
+			if err := Convert_hub_TrialCondition_To_v1alpha1_TrialCondition(&(*in)[i], &(*out)[i], s); err != nil {
 				return err
 			}
 		}
@@ -1484,38 +1587,38 @@ func autoConvert_trial_TrialStatus_To_v1alpha1_TrialStatus(in *trial.TrialStatus
 	return nil
 }
 
-// Convert_trial_TrialStatus_To_v1alpha1_TrialStatus is an autogenerated conversion function.
-func Convert_trial_TrialStatus_To_v1alpha1_TrialStatus(in *trial.TrialStatus, out *TrialStatus, s conversion.Scope) error {
-	return autoConvert_trial_TrialStatus_To_v1alpha1_TrialStatus(in, out, s)
+// Convert_hub_TrialStatus_To_v1alpha1_TrialStatus is an autogenerated conversion function.
+func Convert_hub_TrialStatus_To_v1alpha1_TrialStatus(in *hub.TrialStatus, out *TrialStatus, s conversion.Scope) error {
+	return autoConvert_hub_TrialStatus_To_v1alpha1_TrialStatus(in, out, s)
 }
 
-func autoConvert_v1alpha1_TrialTemplateSpec_To_experiment_TrialTemplateSpec(in *TrialTemplateSpec, out *experiment.TrialTemplateSpec, s conversion.Scope) error {
+func autoConvert_v1alpha1_TrialTemplateSpec_To_hub_TrialTemplateSpec(in *TrialTemplateSpec, out *hub.TrialTemplateSpec, s conversion.Scope) error {
 	out.ObjectMeta = in.ObjectMeta
-	if err := Convert_v1alpha1_TrialSpec_To_trial_TrialSpec(&in.Spec, &out.Spec, s); err != nil {
+	if err := Convert_v1alpha1_TrialSpec_To_hub_TrialSpec(&in.Spec, &out.Spec, s); err != nil {
 		return err
 	}
 	return nil
 }
 
-// Convert_v1alpha1_TrialTemplateSpec_To_experiment_TrialTemplateSpec is an autogenerated conversion function.
-func Convert_v1alpha1_TrialTemplateSpec_To_experiment_TrialTemplateSpec(in *TrialTemplateSpec, out *experiment.TrialTemplateSpec, s conversion.Scope) error {
-	return autoConvert_v1alpha1_TrialTemplateSpec_To_experiment_TrialTemplateSpec(in, out, s)
+// Convert_v1alpha1_TrialTemplateSpec_To_hub_TrialTemplateSpec is an autogenerated conversion function.
+func Convert_v1alpha1_TrialTemplateSpec_To_hub_TrialTemplateSpec(in *TrialTemplateSpec, out *hub.TrialTemplateSpec, s conversion.Scope) error {
+	return autoConvert_v1alpha1_TrialTemplateSpec_To_hub_TrialTemplateSpec(in, out, s)
 }
 
-func autoConvert_experiment_TrialTemplateSpec_To_v1alpha1_TrialTemplateSpec(in *experiment.TrialTemplateSpec, out *TrialTemplateSpec, s conversion.Scope) error {
+func autoConvert_hub_TrialTemplateSpec_To_v1alpha1_TrialTemplateSpec(in *hub.TrialTemplateSpec, out *TrialTemplateSpec, s conversion.Scope) error {
 	out.ObjectMeta = in.ObjectMeta
-	if err := Convert_trial_TrialSpec_To_v1alpha1_TrialSpec(&in.Spec, &out.Spec, s); err != nil {
+	if err := Convert_hub_TrialSpec_To_v1alpha1_TrialSpec(&in.Spec, &out.Spec, s); err != nil {
 		return err
 	}
 	return nil
 }
 
-// Convert_experiment_TrialTemplateSpec_To_v1alpha1_TrialTemplateSpec is an autogenerated conversion function.
-func Convert_experiment_TrialTemplateSpec_To_v1alpha1_TrialTemplateSpec(in *experiment.TrialTemplateSpec, out *TrialTemplateSpec, s conversion.Scope) error {
-	return autoConvert_experiment_TrialTemplateSpec_To_v1alpha1_TrialTemplateSpec(in, out, s)
+// Convert_hub_TrialTemplateSpec_To_v1alpha1_TrialTemplateSpec is an autogenerated conversion function.
+func Convert_hub_TrialTemplateSpec_To_v1alpha1_TrialTemplateSpec(in *hub.TrialTemplateSpec, out *TrialTemplateSpec, s conversion.Scope) error {
+	return autoConvert_hub_TrialTemplateSpec_To_v1alpha1_TrialTemplateSpec(in, out, s)
 }
 
-func autoConvert_v1alpha1_Value_To_trial_Value(in *Value, out *trial.Value, s conversion.Scope) error {
+func autoConvert_v1alpha1_Value_To_hub_Value(in *Value, out *hub.Value, s conversion.Scope) error {
 	out.Name = in.Name
 	out.Value = in.Value
 	out.Error = in.Error
@@ -1523,12 +1626,12 @@ func autoConvert_v1alpha1_Value_To_trial_Value(in *Value, out *trial.Value, s co
 	return nil
 }
 
-// Convert_v1alpha1_Value_To_trial_Value is an autogenerated conversion function.
-func Convert_v1alpha1_Value_To_trial_Value(in *Value, out *trial.Value, s conversion.Scope) error {
-	return autoConvert_v1alpha1_Value_To_trial_Value(in, out, s)
+// Convert_v1alpha1_Value_To_hub_Value is an autogenerated conversion function.
+func Convert_v1alpha1_Value_To_hub_Value(in *Value, out *hub.Value, s conversion.Scope) error {
+	return autoConvert_v1alpha1_Value_To_hub_Value(in, out, s)
 }
 
-func autoConvert_trial_Value_To_v1alpha1_Value(in *trial.Value, out *Value, s conversion.Scope) error {
+func autoConvert_hub_Value_To_v1alpha1_Value(in *hub.Value, out *Value, s conversion.Scope) error {
 	out.Name = in.Name
 	out.Value = in.Value
 	out.Error = in.Error
@@ -1536,7 +1639,7 @@ func autoConvert_trial_Value_To_v1alpha1_Value(in *trial.Value, out *Value, s co
 	return nil
 }
 
-// Convert_trial_Value_To_v1alpha1_Value is an autogenerated conversion function.
-func Convert_trial_Value_To_v1alpha1_Value(in *trial.Value, out *Value, s conversion.Scope) error {
-	return autoConvert_trial_Value_To_v1alpha1_Value(in, out, s)
+// Convert_hub_Value_To_v1alpha1_Value is an autogenerated conversion function.
+func Convert_hub_Value_To_v1alpha1_Value(in *hub.Value, out *Value, s conversion.Scope) error {
+	return autoConvert_hub_Value_To_v1alpha1_Value(in, out, s)
 }

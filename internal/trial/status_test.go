@@ -19,6 +19,7 @@ package trial
 import (
 	"testing"
 
+	"github.com/redskyops/redskyops-controller/internal/hub"
 	"github.com/stretchr/testify/assert"
 	corev1 "k8s.io/api/core/v1"
 )
@@ -26,7 +27,7 @@ import (
 func TestUpdateStatus_Summarize(t *testing.T) {
 	cases := []struct {
 		desc       string
-		conditions []TrialCondition
+		conditions []hub.TrialCondition
 		phase      string
 	}{
 		{
@@ -35,13 +36,13 @@ func TestUpdateStatus_Summarize(t *testing.T) {
 		},
 		{
 			desc: "HasSetupTasks",
-			conditions: []TrialCondition{
+			conditions: []hub.TrialCondition{
 				{
-					Type:   TrialSetupCreated,
+					Type:   hub.TrialSetupCreated,
 					Status: corev1.ConditionUnknown,
 				},
 				{
-					Type:   TrialSetupDeleted,
+					Type:   hub.TrialSetupDeleted,
 					Status: corev1.ConditionUnknown,
 				},
 			},
@@ -49,13 +50,13 @@ func TestUpdateStatus_Summarize(t *testing.T) {
 		},
 		{
 			desc: "SettingUp",
-			conditions: []TrialCondition{
+			conditions: []hub.TrialCondition{
 				{
-					Type:   TrialSetupCreated,
+					Type:   hub.TrialSetupCreated,
 					Status: corev1.ConditionFalse,
 				},
 				{
-					Type:   TrialSetupDeleted,
+					Type:   hub.TrialSetupDeleted,
 					Status: corev1.ConditionUnknown,
 				},
 			},
@@ -63,13 +64,13 @@ func TestUpdateStatus_Summarize(t *testing.T) {
 		},
 		{
 			desc: "SetupCreated",
-			conditions: []TrialCondition{
+			conditions: []hub.TrialCondition{
 				{
-					Type:   TrialSetupCreated,
+					Type:   hub.TrialSetupCreated,
 					Status: corev1.ConditionTrue,
 				},
 				{
-					Type:   TrialSetupDeleted,
+					Type:   hub.TrialSetupDeleted,
 					Status: corev1.ConditionUnknown,
 				},
 			},
@@ -77,17 +78,17 @@ func TestUpdateStatus_Summarize(t *testing.T) {
 		},
 		{
 			desc: "SetupCreateFailure",
-			conditions: []TrialCondition{
+			conditions: []hub.TrialCondition{
 				{
-					Type:   TrialSetupCreated,
+					Type:   hub.TrialSetupCreated,
 					Status: corev1.ConditionFalse,
 				},
 				{
-					Type:   TrialSetupDeleted,
+					Type:   hub.TrialSetupDeleted,
 					Status: corev1.ConditionUnknown,
 				},
 				{
-					Type:   TrialFailed,
+					Type:   hub.TrialFailed,
 					Status: corev1.ConditionTrue,
 				},
 			},
@@ -95,17 +96,17 @@ func TestUpdateStatus_Summarize(t *testing.T) {
 		},
 		{
 			desc: "SetupCreateUnexpectedFailure",
-			conditions: []TrialCondition{
+			conditions: []hub.TrialCondition{
 				{
-					Type:   TrialSetupCreated,
+					Type:   hub.TrialSetupCreated,
 					Status: corev1.ConditionTrue,
 				},
 				{
-					Type:   TrialSetupDeleted,
+					Type:   hub.TrialSetupDeleted,
 					Status: corev1.ConditionUnknown,
 				},
 				{
-					Type:   TrialFailed,
+					Type:   hub.TrialFailed,
 					Status: corev1.ConditionTrue,
 				},
 			},
@@ -114,7 +115,7 @@ func TestUpdateStatus_Summarize(t *testing.T) {
 	}
 	for _, c := range cases {
 		t.Run(c.desc, func(t *testing.T) {
-			tt := &Trial{Status: TrialStatus{Conditions: c.conditions}}
+			tt := &hub.Trial{Status: hub.TrialStatus{Conditions: c.conditions}}
 			UpdateStatus(tt)
 			assert.Equal(t, c.phase, tt.Status.Phase)
 		})
@@ -124,13 +125,13 @@ func TestUpdateStatus_Summarize(t *testing.T) {
 func TestUpdateStatus_Values(t *testing.T) {
 	cases := []struct {
 		desc       string
-		conditions []TrialCondition
-		values     []Value
+		conditions []hub.TrialCondition
+		values     []hub.Value
 		value      string
 	}{
 		{
 			desc: "OneValue",
-			values: []Value{
+			values: []hub.Value{
 				{
 					Name:  "foo",
 					Value: "1.0",
@@ -140,7 +141,7 @@ func TestUpdateStatus_Values(t *testing.T) {
 		},
 		{
 			desc: "TwoValues",
-			values: []Value{
+			values: []hub.Value{
 				{
 					Name:  "foo",
 					Value: "1.0",
@@ -154,7 +155,7 @@ func TestUpdateStatus_Values(t *testing.T) {
 		},
 		{
 			desc: "NotReady",
-			values: []Value{
+			values: []hub.Value{
 				{
 					Name:              "foo",
 					Value:             "1.0",
@@ -169,7 +170,7 @@ func TestUpdateStatus_Values(t *testing.T) {
 		},
 		{
 			desc: "NoneReady",
-			values: []Value{
+			values: []hub.Value{
 				{
 					Name:              "foo",
 					Value:             "1.0",
@@ -185,9 +186,9 @@ func TestUpdateStatus_Values(t *testing.T) {
 		},
 		{
 			desc: "Failed",
-			conditions: []TrialCondition{
+			conditions: []hub.TrialCondition{
 				{
-					Type:    TrialFailed,
+					Type:    hub.TrialFailed,
 					Status:  corev1.ConditionTrue,
 					Message: "test failure message",
 				},
@@ -197,9 +198,9 @@ func TestUpdateStatus_Values(t *testing.T) {
 	}
 	for _, c := range cases {
 		t.Run(c.desc, func(t *testing.T) {
-			tt := &Trial{
-				Spec:   TrialSpec{Values: c.values},
-				Status: TrialStatus{Conditions: c.conditions},
+			tt := &hub.Trial{
+				Spec:   hub.TrialSpec{Values: c.values},
+				Status: hub.TrialStatus{Conditions: c.conditions},
 			}
 			UpdateStatus(tt)
 			assert.Equal(t, c.value, tt.Status.Values)

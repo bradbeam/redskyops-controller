@@ -235,3 +235,5 @@ type ExperimentList struct {
 func init() {
 	SchemeBuilder.Register(&Experiment{}, &ExperimentList{})
 }
+
+func (*Experiment) Hub() {}

@@ -21,15 +21,16 @@ import (
 	"strings"
 	"time"
 
+	"github.com/redskyops/redskyops-controller/internal/hub"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 // IsFinished checks to see if the specified trial is finished
-func IsFinished(t *Trial) bool {
+func IsFinished(t *hub.Trial) bool {
 	for _, c := range t.Status.Conditions {
 		if c.Status == corev1.ConditionTrue {
-			if c.Type == TrialComplete || c.Type == TrialFailed {
+			if c.Type == hub.TrialComplete || c.Type == hub.TrialFailed {
 				return true
 			}
 		}
@@ -38,12 +39,12 @@ func IsFinished(t *Trial) bool {
 }
 
 // IsAbandoned checks to see if the specified trial is abandoned
-func IsAbandoned(t *Trial) bool {
+func IsAbandoned(t *hub.Trial) bool {
 	return !IsFinished(t) && !t.GetDeletionTimestamp().IsZero()
 }
 
 // IsActive checks to see if the specified trial and any setup delete tasks are NOT finished
-func IsActive(t *Trial) bool {
+func IsActive(t *hub.Trial) bool {
 	// Not finished, definitely active
 	if !IsFinished(t) {
 		return true
@@ -51,7 +52,7 @@ func IsActive(t *Trial) bool {
 
 	// Check if a setup delete task exists and has not yet completed (remember the TrialSetupDeleted status is optional!)
 	for _, c := range t.Status.Conditions {
-		if c.Type == TrialSetupDeleted && c.Status != corev1.ConditionTrue {
+		if c.Type == hub.TrialSetupDeleted && c.Status != corev1.ConditionTrue {
 			return true
 		}
 	}
@@ -61,7 +62,7 @@ func IsActive(t *Trial) bool {
 
 // IsTrialJobReference checks to see if the supplied reference likely points to the job of a trial. This is
 // used primarily to give special handling to patch operations so they can refer to trial job before it exists.
-func IsTrialJobReference(t *Trial, ref *corev1.ObjectReference) bool {
+func IsTrialJobReference(t *hub.Trial, ref *corev1.ObjectReference) bool {
 	// Kind _must_ be job
 	if ref.Kind != "Job" {
 		return false
@@ -91,7 +92,7 @@ func IsTrialJobReference(t *Trial, ref *corev1.ObjectReference) bool {
 }
 
 // AppendAssignmentEnv appends an environment variable for each trial assignment
-func AppendAssignmentEnv(t *Trial, env []corev1.EnvVar) []corev1.EnvVar {
+func AppendAssignmentEnv(t *hub.Trial, env []corev1.EnvVar) []corev1.EnvVar {
 	for _, a := range t.Spec.Assignments {
 		name := strings.ReplaceAll(strings.ToUpper(a.Name), ".", "_")
 		env = append(env, corev1.EnvVar{Name: name, Value: fmt.Sprintf("%d", a.Value)})
@@ -100,7 +101,7 @@ func AppendAssignmentEnv(t *Trial, env []corev1.EnvVar) []corev1.EnvVar {
 }
 
 // NeedsCleanup checks to see if a trial's TTL has expired
-func NeedsCleanup(t *Trial) bool {
+func NeedsCleanup(t *hub.Trial) bool {
 	// Already deleted or still active, no cleanup necessary
 	if !t.GetDeletionTimestamp().IsZero() || IsActive(t) {
 		return false
@@ -112,7 +113,7 @@ func NeedsCleanup(t *Trial) bool {
 	for _, c := range t.Status.Conditions {
 		if isFinishTimeCondition(&c) {
 			// Adjust the TTL if specified separately for failures
-			if c.Type == TrialFailed && t.Spec.TTLSecondsAfterFailure != nil {
+			if c.Type == hub.TrialFailed && t.Spec.TTLSecondsAfterFailure != nil {
 				ttlSeconds = t.Spec.TTLSecondsAfterFailure
 			}
 
@@ -134,9 +135,9 @@ func NeedsCleanup(t *Trial) bool {
 }
 
 // isFinishTimeCondition returns true if the condition is relevant to the "finish time"
-func isFinishTimeCondition(c *TrialCondition) bool {
+func isFinishTimeCondition(c *hub.TrialCondition) bool {
 	switch c.Type {
-	case TrialComplete, TrialFailed, TrialSetupDeleted:
+	case hub.TrialComplete, hub.TrialFailed, hub.TrialSetupDeleted:
 		return c.Status == corev1.ConditionTrue
 	default:
 		return false

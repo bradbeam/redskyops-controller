@@ -18,12 +18,14 @@ package trial
 
 import (
 	"strings"
+
+	"github.com/redskyops/redskyops-controller/internal/hub"
 )
 
 // GetInitializers returns the initializers for the specified trial
-func GetInitializers(t *Trial) []string {
+func GetInitializers(t *hub.Trial) []string {
 	var initializers []string
-	for _, e := range strings.Split(t.GetAnnotations()[AnnotationInitializer], ",") {
+	for _, e := range strings.Split(t.GetAnnotations()[hub.AnnotationInitializer], ",") {
 		e = strings.TrimSpace(e)
 		if e != "" {
 			initializers = append(initializers, e)
@@ -33,21 +35,21 @@ func GetInitializers(t *Trial) []string {
 }
 
 // SetInitializers sets the supplied initializers on the trial
-func SetInitializers(t *Trial, initializers []string) {
+func SetInitializers(t *hub.Trial, initializers []string) {
 	a := t.GetAnnotations()
 	if a == nil {
 		a = make(map[string]string, 1)
 	}
 	if len(initializers) > 0 {
-		a[AnnotationInitializer] = strings.Join(initializers, ",")
+		a[hub.AnnotationInitializer] = strings.Join(initializers, ",")
 	} else {
-		delete(a, AnnotationInitializer)
+		delete(a, hub.AnnotationInitializer)
 	}
 	t.SetAnnotations(a)
 }
 
 // AddInitializer adds an initializer to the trial; returns true only if the trial is changed
-func AddInitializer(t *Trial, initializer string) bool {
+func AddInitializer(t *hub.Trial, initializer string) bool {
 	init := GetInitializers(t)
 	for _, e := range init {
 		if e == initializer {
@@ -59,7 +61,7 @@ func AddInitializer(t *Trial, initializer string) bool {
 }
 
 // RemoveInitializer removes the first occurrence of an initializer from the trial; returns true only if the trial is changed
-func RemoveInitializer(t *Trial, initializer string) bool {
+func RemoveInitializer(t *hub.Trial, initializer string) bool {
 	init := GetInitializers(t)
 	for i, e := range init {
 		if e == initializer {

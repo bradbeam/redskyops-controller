@@ -20,6 +20,7 @@ import (
 	"testing"
 
 	. "github.com/onsi/gomega"
+	"github.com/redskyops/redskyops-controller/internal/hub"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -27,7 +28,7 @@ func TestSummarize(t *testing.T) {
 	g := NewGomegaWithT(t)
 	now := metav1.Now()
 	paused := int32(0)
-	exp := &Experiment{}
+	exp := &hub.Experiment{}
 	exp.Annotations = map[string]string{}
 
 	// Initial phase is "empty" or created
@@ -62,19 +63,19 @@ func TestSummarize(t *testing.T) {
 }
 
 // Explicitly sets the state of the fields consider when computing the phase
-func setupExperiment(exp *Experiment, replicas *int32, experimentURL, nextTrialURL string, deletionTimestamp *metav1.Time) {
+func setupExperiment(exp *hub.Experiment, replicas *int32, experimentURL, nextTrialURL string, deletionTimestamp *metav1.Time) {
 	exp.Spec.Replicas = replicas
 
 	if experimentURL != "" {
-		exp.Annotations[AnnotationExperimentURL] = experimentURL
+		exp.Annotations[hub.AnnotationExperimentURL] = experimentURL
 	} else {
-		delete(exp.Annotations, AnnotationExperimentURL)
+		delete(exp.Annotations, hub.AnnotationExperimentURL)
 	}
 
 	if nextTrialURL != "" {
-		exp.Annotations[AnnotationNextTrialURL] = nextTrialURL
+		exp.Annotations[hub.AnnotationNextTrialURL] = nextTrialURL
 	} else {
-		delete(exp.Annotations, AnnotationNextTrialURL)
+		delete(exp.Annotations, hub.AnnotationNextTrialURL)
 	}
 
 	exp.DeletionTimestamp = deletionTimestamp

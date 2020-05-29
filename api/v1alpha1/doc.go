@@ -1,3 +1,2 @@
-// +k8s:conversion-gen=github.com/redskyops/redskyops-controller/internal/experiment
-// +k8s:conversion-gen=github.com/redskyops/redskyops-controller/internal/trial
+// +k8s:conversion-gen=github.com/redskyops/redskyops-controller/internal/hub
 package v1alpha1

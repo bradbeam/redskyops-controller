@@ -21,6 +21,7 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/redskyops/redskyops-controller/internal/hub"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -45,19 +46,19 @@ const (
 )
 
 var (
-	trialConditionTypeOrder = []TrialConditionType{
-		TrialSetupCreated,
-		TrialSetupDeleted,
-		TrialPatched,
-		TrialReady,
-		TrialObserved,
-		TrialComplete,
-		TrialFailed,
+	trialConditionTypeOrder = []hub.TrialConditionType{
+		hub.TrialSetupCreated,
+		hub.TrialSetupDeleted,
+		hub.TrialPatched,
+		hub.TrialReady,
+		hub.TrialObserved,
+		hub.TrialComplete,
+		hub.TrialFailed,
 	}
 )
 
 // UpdateStatus will make sure the trial status matches the current state of the trial; returns true only if changes were necessary
-func UpdateStatus(t *Trial) bool {
+func UpdateStatus(t *hub.Trial) bool {
 	phase := summarize(t)
 	assignments := assignments(t)
 	values := values(t)
@@ -78,7 +79,7 @@ func UpdateStatus(t *Trial) bool {
 	return dirty
 }
 
-func summarize(t *Trial) string {
+func summarize(t *hub.Trial) string {
 	// If there is an initializer we are in the "setting up" phase
 	if t.HasInitializer() {
 		return settingUp
@@ -103,7 +104,7 @@ func summarize(t *Trial) string {
 		c := t.Status.Conditions[i]
 		switch c.Type {
 
-		case TrialSetupCreated:
+		case hub.TrialSetupCreated:
 			switch c.Status {
 			case corev1.ConditionTrue:
 				phase = setupCreated
@@ -113,7 +114,7 @@ func summarize(t *Trial) string {
 				phase = settingUp
 			}
 
-		case TrialSetupDeleted:
+		case hub.TrialSetupDeleted:
 			switch c.Status {
 			case corev1.ConditionTrue:
 				phase = setupDeleted
@@ -121,7 +122,7 @@ func summarize(t *Trial) string {
 				phase = tearingDown
 			}
 
-		case TrialPatched:
+		case hub.TrialPatched:
 			switch c.Status {
 			case corev1.ConditionTrue:
 				phase = patched
@@ -131,7 +132,7 @@ func summarize(t *Trial) string {
 				phase = patching
 			}
 
-		case TrialReady:
+		case hub.TrialReady:
 			switch c.Status {
 			case corev1.ConditionTrue:
 				if t.Status.StartTime != nil {
@@ -145,7 +146,7 @@ func summarize(t *Trial) string {
 				phase = waiting
 			}
 
-		case TrialObserved:
+		case hub.TrialObserved:
 			switch c.Status {
 			case corev1.ConditionTrue:
 				phase = captured
@@ -155,13 +156,13 @@ func summarize(t *Trial) string {
 				phase = capturing
 			}
 
-		case TrialComplete:
+		case hub.TrialComplete:
 			switch c.Status {
 			case corev1.ConditionTrue:
 				return completed
 			}
 
-		case TrialFailed:
+		case hub.TrialFailed:
 			switch c.Status {
 			case corev1.ConditionTrue:
 				return failed
@@ -171,7 +172,7 @@ func summarize(t *Trial) string {
 	return phase
 }
 
-func assignments(t *Trial) string {
+func assignments(t *hub.Trial) string {
 	assignments := make([]string, len(t.Spec.Assignments))
 	for i := range t.Spec.Assignments {
 		assignments[i] = fmt.Sprintf("%s=%d", t.Spec.Assignments[i].Name, t.Spec.Assignments[i].Value)
@@ -179,10 +180,10 @@ func assignments(t *Trial) string {
 	return strings.Join(assignments, ", ")
 }
 
-func values(t *Trial) string {
+func values(t *hub.Trial) string {
 	for i := range t.Status.Conditions {
 		c := &t.Status.Conditions[i]
-		if c.Type == TrialFailed && c.Status == corev1.ConditionTrue {
+		if c.Type == hub.TrialFailed && c.Status == corev1.ConditionTrue {
 			return c.Message
 		}
 	}
@@ -197,7 +198,7 @@ func values(t *Trial) string {
 }
 
 // ApplyCondition updates a the status of an existing condition or adds it if it does not exist
-func ApplyCondition(status *TrialStatus, conditionType TrialConditionType, conditionStatus corev1.ConditionStatus, reason, message string, time *metav1.Time) {
+func ApplyCondition(status *hub.TrialStatus, conditionType hub.TrialConditionType, conditionStatus corev1.ConditionStatus, reason, message string, time *metav1.Time) {
 	// Make sure we have a time
 	if time == nil {
 		now := metav1.Now()
@@ -227,7 +228,7 @@ func ApplyCondition(status *TrialStatus, conditionType TrialConditionType, condi
 	}
 
 	// Condition does not exist
-	status.Conditions = append(status.Conditions, TrialCondition{
+	status.Conditions = append(status.Conditions, hub.TrialCondition{
 		Type:               conditionType,
 		Status:             conditionStatus,
 		Reason:             reason,
@@ -238,7 +239,7 @@ func ApplyCondition(status *TrialStatus, conditionType TrialConditionType, condi
 }
 
 // CheckCondition checks to see if a condition has a specific status
-func CheckCondition(status *TrialStatus, conditionType TrialConditionType, conditionStatus corev1.ConditionStatus) bool {
+func CheckCondition(status *hub.TrialStatus, conditionType hub.TrialConditionType, conditionStatus corev1.ConditionStatus) bool {
 	for i := range status.Conditions {
 		if status.Conditions[i].Type == conditionType {
 			return status.Conditions[i].Status == conditionStatus
