@@ -206,3 +206,64 @@ type ExperimentStatus struct {
 	ActiveTrials int32 `json:"activeTrials"`
 	// TODO Number of trials: Succeeded, Failed int32 (this would need to be fetch remotely, falling back to the in cluster count)
 }
+
+type Experiment struct {
+	metav1.TypeMeta `json:",inline"`
+	// Standard object metadata
+	metav1.ObjectMeta `json:"metadata,omitempty"`
+	// Specification of the desired behavior for an experiment
+	Spec ExperimentSpec `json:"spec,omitempty"`
+	// Current status of an experiment
+	Status ExperimentStatus `json:"status,omitempty"`
+}
+
+func (e *Experiment) Hub() {}
+
+// Experiment labels and annotations
+
+const (
+	// AnnotationExperimentURL is the URL of the experiment on the remote server
+	AnnotationExperimentURL = "redskyops.dev/experiment-url"
+	// AnnotationNextTrialURL is the URL used to obtain the next trial suggestion
+	AnnotationNextTrialURL = "redskyops.dev/next-trial-url"
+	// AnnotationReportTrialURL is the URL used to report trial observations
+	AnnotationReportTrialURL = "redskyops.dev/report-trial-url"
+
+	// LabelExperiment is the name of the experiment associated with an object
+	LabelExperiment = "redskyops.dev/experiment"
+)
+
+// Replicas returns the effective replica (trial) count for the experiment
+func (in *Experiment) Replicas() int32 {
+	if in == nil || !in.DeletionTimestamp.IsZero() {
+		return 0
+	}
+	if in.Spec.Replicas != nil {
+		return *in.Spec.Replicas
+	}
+	return 1
+}
+
+// SetReplicas establishes a new replica (trial) count for the experiment
+func (in *Experiment) SetReplicas(r int) {
+	if in != nil {
+		replicas := int32(r)
+		if replicas < 0 {
+			replicas = 0
+		}
+		in.Spec.Replicas = &replicas
+	}
+}
+
+// TrialSelector returns a label selector for matching trials associated with the experiment
+func (in *Experiment) TrialSelector() *metav1.LabelSelector {
+	if in.Spec.Selector != nil {
+		return in.Spec.Selector
+	}
+
+	return &metav1.LabelSelector{
+		MatchLabels: map[string]string{
+			LabelExperiment: in.Name,
+		},
+	}
+}

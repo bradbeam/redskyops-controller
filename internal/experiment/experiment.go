@@ -17,7 +17,6 @@ limitations under the License.
 package experiment
 
 import (
-	redskyv1alpha1 "github.com/redskyops/redskyops-controller/api/v1alpha1"
 	"github.com/redskyops/redskyops-controller/internal/controller"
 	"github.com/redskyops/redskyops-controller/internal/trial"
 )
@@ -47,7 +46,7 @@ const (
 
 // UpdateStatus will ensure the experiment's status matches what is in the supplied trial list; returns true only if
 // changes were necessary
-func UpdateStatus(exp *redskyv1alpha1.Experiment, trialList *redskyv1alpha1.TrialList) bool {
+func UpdateStatus(exp *Experiment, trialList *trial.TrialList) bool {
 	// Count the active trials
 	activeTrials := int32(0)
 	for i := range trialList.Items {
@@ -80,8 +79,8 @@ func UpdateStatus(exp *redskyv1alpha1.Experiment, trialList *redskyv1alpha1.Tria
 	return false
 }
 
-func summarize(exp *redskyv1alpha1.Experiment, activeTrials int32, totalTrials int) string {
-	remote := exp.Annotations[redskyv1alpha1.AnnotationExperimentURL] != "" // TODO Or check for the server finalizer?
+func summarize(exp *Experiment, activeTrials int32, totalTrials int) string {
+	remote := exp.Annotations[AnnotationExperimentURL] != "" // TODO Or check for the server finalizer?
 
 	if !exp.GetDeletionTimestamp().IsZero() {
 		return PhaseDeleted
@@ -92,7 +91,7 @@ func summarize(exp *redskyv1alpha1.Experiment, activeTrials int32, totalTrials i
 	}
 
 	if exp.Replicas() == 0 {
-		if remote && exp.Annotations[redskyv1alpha1.AnnotationNextTrialURL] == "" {
+		if remote && exp.Annotations[AnnotationNextTrialURL] == "" {
 			return PhaseCompleted
 		}
 		return PhasePaused

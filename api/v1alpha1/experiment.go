@@ -17,6 +17,7 @@ limitations under the License.
 package v1alpha1
 
 import (
+	experiment "github.com/redskyops/redskyops-controller/internal/experiment"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -50,7 +51,7 @@ func (in *Experiment) TrialSelector() *metav1.LabelSelector {
 
 	return &metav1.LabelSelector{
 		MatchLabels: map[string]string{
-			LabelExperiment: in.Name,
+			experiment.LabelExperiment: in.Name,
 		},
 	}
 }

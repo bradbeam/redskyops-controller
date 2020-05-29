@@ -266,3 +266,27 @@ type TrialStatus struct {
 	// Condition is the current state of the trial
 	Conditions []TrialCondition `json:"conditions,omitempty"`
 }
+
+// Trial is the Schema for the trials API
+type Trial struct {
+	metav1.TypeMeta `json:",inline"`
+	// Standard object metadata
+	metav1.ObjectMeta `json:"metadata,omitempty"`
+	// Specification of the desired behavior for a trial
+	Spec TrialSpec `json:"spec,omitempty"`
+	// Current status of a trial
+	Status TrialStatus `json:"status,omitempty"`
+}
+
+// Trial labels and annotations
+
+const (
+	// AnnotationInitializer is a comma-delimited list of initializing processes. Similar to a "finalizer", the trial
+	// will not start executing until the initializer is empty.
+	AnnotationInitializer = "redskyops.dev/initializer"
+
+	// LabelTrial contains the name of the trial associated with an object
+	LabelTrial = "redskyops.dev/trial"
+	// LabelTrialRole contains the role in trial execution
+	LabelTrialRole = "redskyops.dev/trial-role"
+)

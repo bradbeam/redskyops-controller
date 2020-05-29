@@ -21,7 +21,7 @@ import (
 	"fmt"
 	"time"
 
-	redskyv1alpha1 "github.com/redskyops/redskyops-controller/api/v1alpha1"
+	"github.com/redskyops/redskyops-controller/internal/experiment"
 	"github.com/redskyops/redskyops-controller/internal/meta"
 	batchv1 "k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -31,7 +31,7 @@ import (
 )
 
 // NewJob returns a new trial run job from the template on the trial
-func NewJob(t *redskyv1alpha1.Trial) *batchv1.Job {
+func NewJob(t *Trial) *batchv1.Job {
 	job := &batchv1.Job{}
 
 	// Start with the job template
@@ -41,14 +41,14 @@ func NewJob(t *redskyv1alpha1.Trial) *batchv1.Job {
 	}
 
 	// Apply labels to the job itself
-	meta.AddLabel(job, redskyv1alpha1.LabelExperiment, t.ExperimentNamespacedName().Name)
-	meta.AddLabel(job, redskyv1alpha1.LabelTrial, t.Name)
-	meta.AddLabel(job, redskyv1alpha1.LabelTrialRole, "trialRun")
+	meta.AddLabel(job, experiment.LabelExperiment, t.ExperimentNamespacedName().Name)
+	meta.AddLabel(job, experiment.LabelTrial, t.Name)
+	meta.AddLabel(job, experiment.LabelTrialRole, "trialRun")
 
 	// Apply labels to the pod template
-	meta.AddLabel(&job.Spec.Template, redskyv1alpha1.LabelExperiment, t.ExperimentNamespacedName().Name)
-	meta.AddLabel(&job.Spec.Template, redskyv1alpha1.LabelTrial, t.Name)
-	meta.AddLabel(&job.Spec.Template, redskyv1alpha1.LabelTrialRole, "trialRun")
+	meta.AddLabel(&job.Spec.Template, experiment.LabelExperiment, t.ExperimentNamespacedName().Name)
+	meta.AddLabel(&job.Spec.Template, experiment.LabelTrial, t.Name)
+	meta.AddLabel(&job.Spec.Template, experiment.LabelTrialRole, "trialRun")
 
 	// Provide default metadata
 	job.Namespace = t.Namespace
@@ -83,7 +83,7 @@ func NewJob(t *redskyv1alpha1.Trial) *batchv1.Job {
 	return job
 }
 
-func addDefaultContainer(t *redskyv1alpha1.Trial, job *batchv1.Job) {
+func addDefaultContainer(t *Trial, job *batchv1.Job) {
 	// Determine the sleep time
 	s := t.Spec.ApproximateRuntime
 	if s == nil || s.Duration == 0 {
@@ -104,7 +104,7 @@ func addDefaultContainer(t *redskyv1alpha1.Trial, job *batchv1.Job) {
 	}
 }
 
-func patchSelf(t *redskyv1alpha1.Trial, job *batchv1.Job) *batchv1.Job {
+func patchSelf(t *Trial, job *batchv1.Job) *batchv1.Job {
 	// Look for patch operations that match this trial and apply them
 	for i := range t.Spec.PatchOperations {
 		po := &t.Spec.PatchOperations[i]
