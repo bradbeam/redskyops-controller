@@ -17,13 +17,13 @@ require (
 	github.com/mdp/qrterminal/v3 v3.0.0
 	github.com/onsi/gomega v1.8.1
 	github.com/pkg/browser v0.0.0-20180916011732-0a3d74bf9ce4
-	github.com/prometheus/client_golang v1.0.0
-	github.com/prometheus/common v0.4.1
+	github.com/prometheus/client_golang v1.7.1
+	github.com/prometheus/common v0.10.0
 	github.com/redskyops/redskyops-ui/v2 v2.1.0
 	github.com/spf13/cobra v1.0.0
 	github.com/spf13/pflag v1.0.5
 	github.com/stretchr/testify v1.4.0
-	github.com/zorkian/go-datadog-api v2.24.0+incompatible
+	github.com/zorkian/go-datadog-api v2.28.0+incompatible
 	golang.org/x/net v0.0.0-20200226121028-0de0cce0169b
 	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45
 	golang.org/x/time v0.0.0-20190308202827-9d24e82272b4
