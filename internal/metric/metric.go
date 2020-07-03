@@ -22,6 +22,7 @@ import (
 	"strings"
 	"time"
 
+	redskyapi "github.com/redskyops/redskyops-controller/api/v1beta1"
 	redskyv1beta1 "github.com/redskyops/redskyops-controller/api/v1beta1"
 	"github.com/redskyops/redskyops-controller/internal/template"
 	corev1 "k8s.io/api/core/v1"
@@ -44,6 +45,31 @@ type CaptureError struct {
 
 func (e *CaptureError) Error() string {
 	return e.Message
+}
+
+type MetricCollector interface {
+	Collect() (float64, float64, error)
+	Endpoints() []string
+	Name() string
+}
+
+func NewMetricCollector(metric redskyapi.Metric) (mc MetricCollector) {
+	// TODO should metric.Type be like an enum?
+	// map[int]string
+	// const MetricPrometheus iota
+	// map[MetricPrometheus] = "prometheus"
+	switch metric.Type {
+	case redskyapi.MetricLocal:
+	case redskyapi.MetricPods:
+	case redskyapi.MetricDatadog:
+	case redskyapi.MetricPrometheus:
+		mc = NewPrometheusCollector(metric)
+	case redskyapi.MetricJSONPath:
+	default:
+
+	}
+
+	return mc
 }
 
 // CaptureMetric captures a point-in-time metric value and it's error (standard deviation)

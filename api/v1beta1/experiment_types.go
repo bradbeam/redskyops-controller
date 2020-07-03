@@ -117,6 +117,13 @@ type Metric struct {
 	Port intstr.IntOrString `json:"port,omitempty"`
 	// URL path component used to collect the metric value from an endpoint (used as a prefix for the Prometheus API)
 	Path string `json:"path,omitempty"`
+	// URL is the endpoint for scraping metrics.
+	// URL is mutually exclusive from Selector and will be preferred if
+	// both are given.
+	URL string `json:"url,omitempty"`
+	// Proxy is the address of a proxy server to use for making external
+	// requests (ex to query datadog )
+	Proxy string `json:"proxy,omitempty"`
 }
 
 // PatchReadinessGate contains a reference to a condition

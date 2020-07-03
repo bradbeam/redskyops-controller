@@ -26,10 +26,31 @@ import (
 	prom "github.com/prometheus/client_golang/api"
 	promv1 "github.com/prometheus/client_golang/api/prometheus/v1"
 	"github.com/prometheus/common/model"
+	redskyapi "github.com/redskyops/redskyops-controller/api/v1beta1"
 	redskyv1beta1 "github.com/redskyops/redskyops-controller/api/v1beta1"
 	"k8s.io/apimachinery/pkg/runtime"
 )
 
+type PrometheusCollector struct {
+	redskyapi.Metric
+}
+
+func NewPrometheusCollector(metric redskyapi.Metric) *PrometheusCollector {
+	return &PrometheusCollector{}
+}
+
+func (p *PrometheusCollector) Collect() (float64, float64, error) {
+
+	return 0, 0, nil
+}
+
+func (p *PrometheusCollector) Endpoints() []string {
+	return nil
+}
+
+func (p *PrometheusCollector) Name() string {
+	return ""
+}
 func capturePrometheusMetric(m *redskyv1beta1.Metric, target runtime.Object, completionTime time.Time) (value float64, stddev float64, err error) {
 	var urls []string
 
