@@ -17,6 +17,7 @@ limitations under the License.
 package metric
 
 import (
+	"context"
 	"fmt"
 	"strconv"
 	"strings"
@@ -48,12 +49,11 @@ func (e *CaptureError) Error() string {
 }
 
 type MetricCollector interface {
-	Collect() (float64, float64, error)
-	Endpoints() []string
+	Collect(context.Context) (float64, float64, error)
 	Name() string
 }
 
-func NewMetricCollector(metric redskyapi.Metric) (mc MetricCollector) {
+func NewMetricCollector(metric redskyapi.Metric) (mc MetricCollector, err error) {
 	// TODO should metric.Type be like an enum?
 	// map[int]string
 	// const MetricPrometheus iota
@@ -63,13 +63,13 @@ func NewMetricCollector(metric redskyapi.Metric) (mc MetricCollector) {
 	case redskyapi.MetricPods:
 	case redskyapi.MetricDatadog:
 	case redskyapi.MetricPrometheus:
-		mc = NewPrometheusCollector(metric)
+		mc, err = NewPrometheusCollector(metric)
 	case redskyapi.MetricJSONPath:
 	default:
 
 	}
 
-	return mc
+	return mc, err
 }
 
 // CaptureMetric captures a point-in-time metric value and it's error (standard deviation)
