@@ -165,7 +165,7 @@ func (r *PatchReconciler) evaluatePatchOperations(ctx context.Context, t *redsky
 
 	// Update the status to indicate that patches are evaluated
 	trial.ApplyCondition(&t.Status, redskyv1beta1.TrialPatched, corev1.ConditionFalse, "", "", probeTime)
-	err := r.Update(ctx, t)
+	err := r.Status().Update(ctx, t)
 	return controller.RequeueConflict(err)
 }
 
@@ -200,13 +200,13 @@ func (r *PatchReconciler) applyPatches(ctx context.Context, t *redskyv1beta1.Tri
 		}
 
 		// Update the patch operation status
-		err := r.Update(ctx, t)
+		err := r.Status().Update(ctx, t)
 		return controller.RequeueConflict(err)
 	}
 
 	// We made it through all of the patches without needing additional changes
 	trial.ApplyCondition(&t.Status, redskyv1beta1.TrialPatched, corev1.ConditionTrue, "", "", probeTime)
-	err := r.Update(ctx, t)
+	err := r.Status().Update(ctx, t)
 	return controller.RequeueConflict(err)
 }
 

@@ -133,7 +133,7 @@ func (r *MetricReconciler) evaluateMetrics(ctx context.Context, t *redskyv1beta1
 
 	trial.ApplyCondition(&t.Status, redskyv1beta1.TrialObserved, corev1.ConditionUnknown, "", "", probeTime)
 
-	err := r.Update(ctx, t)
+	err := r.Status().Update(ctx, t)
 
 	return controller.RequeueConflict(err)
 }
@@ -189,13 +189,13 @@ func (r *MetricReconciler) collectMetrics(ctx context.Context, t *redskyv1beta1.
 
 		// We have started collecting metrics (success or fail), transition into a false status
 		trial.ApplyCondition(&t.Status, redskyv1beta1.TrialObserved, corev1.ConditionFalse, "", "", probeTime)
-		err := r.Update(ctx, t)
+		err := r.Status().Update(ctx, t)
 		return controller.RequeueConflict(err)
 	}
 
 	// We made it through all of the metrics without needing additional changes
 	trial.ApplyCondition(&t.Status, redskyv1beta1.TrialObserved, corev1.ConditionTrue, "", "", probeTime)
-	err := r.Update(ctx, t)
+	err := r.Status().Update(ctx, t)
 	return controller.RequeueConflict(err)
 }
 

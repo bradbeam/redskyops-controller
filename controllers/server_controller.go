@@ -315,7 +315,7 @@ func (r *ServerReconciler) reportTrial(ctx context.Context, log logr.Logger, t *
 	}
 
 	// Update the trial
-	if err := r.Update(ctx, t); err != nil {
+	if err := r.Status().Update(ctx, t); err != nil {
 		return controller.RequeueConflict(err)
 	}
 

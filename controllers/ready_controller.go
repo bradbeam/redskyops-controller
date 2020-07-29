@@ -149,7 +149,7 @@ func (r *ReadyReconciler) evaluateReadinessChecks(ctx context.Context, t *redsky
 
 	// Update the status to indicate that readiness checks are evaluated
 	trial.ApplyCondition(&t.Status, redskyv1beta1.TrialReady, corev1.ConditionFalse, "", "", probeTime)
-	err := r.Update(ctx, t)
+	err := r.Status().Update(ctx, t)
 	return controller.RequeueConflict(err)
 }
 
@@ -172,14 +172,14 @@ func (r *ReadyReconciler) checkReadiness(ctx context.Context, t *redskyv1beta1.T
 		ul, err := r.getCheckTargets(ctx, c)
 		if err != nil {
 			readinessCheckFailed(t, probeTime, err)
-			err := r.Update(ctx, t)
+			err := r.Status().Update(ctx, t)
 			return controller.RequeueConflict(err)
 		}
 
 		// Check for readiness
 		if msg, isReady, err := checker.check(ctx, c, ul, probeTime); err != nil {
 			readinessCheckFailed(t, probeTime, err)
-			err := r.Update(ctx, t)
+			err := r.Status().Update(ctx, t)
 			return controller.RequeueConflict(err)
 		} else if !isReady {
 			// This will get overwritten with anything that isn't ready as we progress through the loop
@@ -196,7 +196,7 @@ func (r *ReadyReconciler) checkReadiness(ctx context.Context, t *redskyv1beta1.T
 	if checker.ready {
 		trial.ApplyCondition(&t.Status, redskyv1beta1.TrialReady, corev1.ConditionTrue, "", "", probeTime)
 	}
-	err := r.Update(ctx, t)
+	err := r.Status().Update(ctx, t)
 	return controller.RequeueConflict(err)
 }
 

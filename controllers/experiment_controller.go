@@ -129,7 +129,7 @@ func (r *ExperimentReconciler) updateTrialStatus(ctx context.Context, trialList 
 
 		// Only send an update if something actually changed
 		if dirty {
-			if err := r.Update(ctx, t); err != nil {
+			if err := r.Status().Update(ctx, t); err != nil {
 				return controller.RequeueConflict(err)
 			}
 		}

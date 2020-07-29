@@ -141,7 +141,7 @@ func (r *SetupReconciler) inspectSetupJobs(ctx context.Context, t *redskyv1beta1
 	// TODO Can we use pointer equivalence on probeTime to help mitigate that problem?
 	for i := range t.Status.Conditions {
 		if t.Status.Conditions[i].LastTransitionTime.Equal(probeTime) {
-			err := r.Update(ctx, t)
+			err := r.Status().Update(ctx, t)
 			return controller.RequeueConflict(err)
 		}
 	}
@@ -206,7 +206,7 @@ func (r *SetupReconciler) createSetupJob(ctx context.Context, t *redskyv1beta1.T
 		// Forbidden for a delete job indicates that namespace was probably deleted
 		if apierrs.IsForbidden(err) && mode == setup.ModeDelete {
 			trial.ApplyCondition(&t.Status, redskyv1beta1.TrialSetupDeleted, corev1.ConditionTrue, "Forbidden", err.Error(), probeTime)
-			err := r.Update(ctx, t)
+			err := r.Status().Update(ctx, t)
 			return controller.RequeueConflict(err)
 		}
 
