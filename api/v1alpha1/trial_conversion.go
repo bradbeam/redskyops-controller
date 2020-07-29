@@ -67,6 +67,19 @@ func Convert_v1alpha1_Trial_To_v1beta1_Trial(in *Trial, out *v1beta1.Trial, s co
 		out.Status.ReadinessChecks = nil
 	}
 
+	// Move `Spec.Values` to `Status.MetricValues`
+	if in.Spec.Values != nil {
+		in, out := &in.Spec.Values, &out.Status.MetricValues
+		*out = make([]v1beta1.Value, len(*in))
+		for i := range *in {
+			if err := Convert_v1alpha1_Value_To_v1beta1_Value(&(*in)[i], &(*out)[i], s); err != nil {
+				return err
+			}
+		}
+	} else {
+		out.Status.MetricValues = nil
+	}
+
 	// Continue
 	return autoConvert_v1alpha1_Trial_To_v1beta1_Trial(in, out, s)
 }
@@ -96,6 +109,19 @@ func Convert_v1beta1_Trial_To_v1alpha1_Trial(in *v1beta1.Trial, out *Trial, s co
 		}
 	} else {
 		out.Spec.ReadinessChecks = nil
+	}
+
+	// Move `Status.MetricValues` to `Spec.Values`
+	if in.Status.MetricValues != nil {
+		in, out := &in.Status.MetricValues, &out.Spec.Values
+		*out = make([]Value, len(*in))
+		for i := range *in {
+			if err := Convert_v1beta1_Value_To_v1alpha1_Value(&(*in)[i], &(*out)[i], s); err != nil {
+				return err
+			}
+		}
+	} else {
+		out.Spec.Values = nil
 	}
 
 	// Continue

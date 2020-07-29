@@ -232,9 +232,6 @@ type TrialSpec struct {
 	// The readiness gates to check before running the trial job
 	ReadinessGates []TrialReadinessGate `json:"readinessGates,omitempty"`
 
-	// Values are the collected metrics at the end of the trial run
-	Values []Value `json:"values,omitempty"`
-
 	// Setup tasks that must run before the trial starts (and possibly after it ends)
 	SetupTasks []SetupTask `json:"setupTasks,omitempty"`
 	// Volumes to make available to setup tasks, typically ConfigMap backed volumes
@@ -265,11 +262,14 @@ type TrialStatus struct {
 	PatchOperations []PatchOperation `json:"patchOperations,omitempty"`
 	// ReadinessChecks are the all of the objects whose conditions need to be inspected for this trial
 	ReadinessChecks []ReadinessCheck `json:"readinessChecks,omitempty"`
+	// MetricValues are the collected metrics at the end of the trial run
+	MetricValues []Value `json:"metricValues,omitempty"`
 }
 
 // +genclient
 // +kubebuilder:object:root=true
 // +kubebuilder:storageversion
+// +kubebuilder:subresource:status
 
 // Trial is the Schema for the trials API
 // +kubebuilder:printcolumn:name="Status",type="string",JSONPath=".status.phase",description="Trial status"

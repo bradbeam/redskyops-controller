@@ -423,9 +423,7 @@ func TestFromClusterTrial(t *testing.T) {
 					Conditions: []redskyv1beta1.TrialCondition{
 						{Type: redskyv1beta1.TrialComplete, Status: corev1.ConditionTrue},
 					},
-				},
-				Spec: redskyv1beta1.TrialSpec{
-					Values: []redskyv1beta1.Value{
+					MetricValues: []redskyv1beta1.Value{
 						{Name: "one", Value: "111.111", Error: "1111.1111"},
 						{Name: "two", Value: "222.222", Error: "2222.2222"},
 						{Name: "three", Value: "333.333", Error: "3333.3333"},

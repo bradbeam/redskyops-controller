@@ -91,8 +91,8 @@ func (r *MetricReconciler) ignoreTrial(t *redskyv1beta1.Trial) bool {
 	}
 
 	// Do not ignore trials that have metrics pending collection
-	for i := range t.Spec.Values {
-		if t.Spec.Values[i].AttemptsRemaining > 0 {
+	for i := range t.Status.MetricValues {
+		if t.Status.MetricValues[i].AttemptsRemaining > 0 {
 			return false
 		}
 	}
@@ -108,7 +108,7 @@ func (r *MetricReconciler) ignoreTrial(t *redskyv1beta1.Trial) bool {
 
 func (r *MetricReconciler) evaluateMetrics(ctx context.Context, t *redskyv1beta1.Trial, probeTime *metav1.Time) (*ctrl.Result, error) {
 	// TODO This check precludes manual additions of Values
-	if len(t.Spec.Values) > 0 {
+	if len(t.Status.MetricValues) > 0 {
 		return nil, nil
 	}
 
@@ -120,20 +120,22 @@ func (r *MetricReconciler) evaluateMetrics(ctx context.Context, t *redskyv1beta1
 
 	// Evaluate the metrics
 	for _, m := range exp.Spec.Metrics {
-		t.Spec.Values = append(t.Spec.Values, redskyv1beta1.Value{
+		t.Status.MetricValues = append(t.Status.MetricValues, redskyv1beta1.Value{
 			Name:              m.Name,
 			AttemptsRemaining: 3,
 		})
 	}
 
 	// Update the status to indicate that we will be collecting metrics
-	if len(t.Spec.Values) > 0 {
-		trial.ApplyCondition(&t.Status, redskyv1beta1.TrialObserved, corev1.ConditionUnknown, "", "", probeTime)
-		err := r.Update(ctx, t)
-		return controller.RequeueConflict(err)
+	if len(t.Status.MetricValues) == 0 {
+		return nil, nil
 	}
 
-	return nil, nil
+	trial.ApplyCondition(&t.Status, redskyv1beta1.TrialObserved, corev1.ConditionUnknown, "", "", probeTime)
+
+	err := r.Update(ctx, t)
+
+	return controller.RequeueConflict(err)
 }
 
 func (r *MetricReconciler) collectMetrics(ctx context.Context, t *redskyv1beta1.Trial, probeTime *metav1.Time) (*ctrl.Result, error) {
@@ -149,8 +151,8 @@ func (r *MetricReconciler) collectMetrics(ctx context.Context, t *redskyv1beta1.
 
 	// Iterate over the metric values, looking for remaining attempts
 	log := r.Log.WithValues("trial", fmt.Sprintf("%s/%s", t.Namespace, t.Name))
-	for i := range t.Spec.Values {
-		v := &t.Spec.Values[i]
+	for i := range t.Status.MetricValues {
+		v := &t.Status.MetricValues[i]
 		if v.AttemptsRemaining == 0 {
 			continue
 		}

@@ -199,8 +199,10 @@ func TestUpdateStatus_Values(t *testing.T) {
 	for _, c := range cases {
 		t.Run(c.desc, func(t *testing.T) {
 			tt := &redskyv1beta1.Trial{
-				Spec:   redskyv1beta1.TrialSpec{Values: c.values},
-				Status: redskyv1beta1.TrialStatus{Conditions: c.conditions},
+				Status: redskyv1beta1.TrialStatus{
+					Conditions:   c.conditions,
+					MetricValues: c.values,
+				},
 			}
 			UpdateStatus(tt)
 			assert.Equal(t, c.value, tt.Status.Values)

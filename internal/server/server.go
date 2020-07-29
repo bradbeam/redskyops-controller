@@ -179,7 +179,7 @@ func FromClusterTrial(in *redskyv1beta1.Trial) *redskyapi.TrialValues {
 	// Record the values only if we didn't fail
 	out.Values = nil
 	if !out.Failed {
-		for _, v := range in.Spec.Values {
+		for _, v := range in.Status.MetricValues {
 			if fv, err := strconv.ParseFloat(v.Value, 64); err == nil {
 				value := redskyapi.Value{
 					MetricName: v.Name,
