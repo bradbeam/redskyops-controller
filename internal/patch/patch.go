@@ -36,16 +36,19 @@ func (p *Patcher) CreatePatchOperation(t *redsky.Trial, pt *redsky.PatchTemplate
 	default:
 		return nil, fmt.Errorf("unknown patch type: %s", pt.Type)
 	}
+	fmt.Println("got patch type")
 
 	patchBytes, err := p.Engine.RenderPatch(pt, t)
 	if err != nil {
 		return nil, err
 	}
+	fmt.Println("got patch bytes")
 
 	ptMeta := &metav1.PartialObjectMetadata{}
 	if err = json.Unmarshal(patchBytes, ptMeta); err != nil {
 		return nil, err
 	}
+	fmt.Println("got ptMeta")
 
 	// Default the namespace to the trial namespace
 	if ptMeta.Namespace == "" {
@@ -54,8 +57,10 @@ func (p *Patcher) CreatePatchOperation(t *redsky.Trial, pt *redsky.PatchTemplate
 
 	objRef, err := getObjectRefFromPatchTemplate(ptMeta, pt)
 	if err != nil {
+		fmt.Println(err)
 		return nil, err
 	}
+	fmt.Println("got ObjRef")
 
 	patchOp = &redsky.PatchOperation{
 		TargetRef:         *objRef,
@@ -80,10 +85,9 @@ func RenderTemplate(te *template.Engine, t *redsky.Trial, p *redsky.PatchTemplat
 	ref := &corev1.ObjectReference{}
 	switch {
 	case p.TargetRef != nil:
-		log.Println("targetref = nil")
+		log.Println("targetref != nil")
 		p.TargetRef.DeepCopyInto(ref)
 	case p.Type == redsky.PatchStrategic, p.Type == "":
-		log.Println("patch type")
 		m := &struct {
 			metav1.TypeMeta   `json:",inline"`
 			metav1.ObjectMeta `json:"metadata,omitempty"`
@@ -152,15 +156,20 @@ func getObjectRefFromPatchTemplate(ptMeta *metav1.PartialObjectMetadata, pt *red
 	// Determine the reference, possibly extracting it from the rendered data
 	ref = &corev1.ObjectReference{}
 
+	fmt.Println("getting obj ref")
 	switch {
 	case pt.TargetRef != nil:
+		fmt.Println("targetref != nil")
 		pt.TargetRef.DeepCopyInto(ref)
 	case pt.Type == redsky.PatchStrategic, pt.Type == "":
+		fmt.Println("strategic, targetref = nil")
 		ref.APIVersion = ptMeta.APIVersion
 		ref.Kind = ptMeta.Kind
 		ref.Name = ptMeta.Name
+		log.Println(ptMeta)
+		fmt.Println(ref)
 	default:
-		return nil, fmt.Errorf("invalid patch reference")
+		return nil, fmt.Errorf("invalid patch and reference combination")
 	}
 
 	if ref.Namespace == "" {
