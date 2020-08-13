@@ -46,12 +46,6 @@ func (p *Patcher) CreatePatchOperation(t *redsky.Trial, pt *redsky.PatchTemplate
 		return nil, err
 	}
 
-	objRef, err := getObjectRefFromPatchTemplate(patchTarget, pt)
-	if err != nil {
-		fmt.Println(err)
-		return nil, err
-	}
-
 	patchOp = &redsky.PatchOperation{
 		TargetRef:         *objRef,
 		Data:              patchBytes,
@@ -60,34 +54,6 @@ func (p *Patcher) CreatePatchOperation(t *redsky.Trial, pt *redsky.PatchTemplate
 	}
 
 	return patchOp, nil
-}
-
-// getObjectRefFromPatchTemplate constructs an corev1.ObjectReference from a patch template.
-func getObjectRefFromPatchTemplate(ptMeta *metav1.PartialObjectMetadata, pt *redsky.PatchTemplate) (ref *corev1.ObjectReference, err error) {
-	// Determine the reference, possibly extracting it from the rendered data
-	ref = &corev1.ObjectReference{}
-
-	switch {
-	case pt.TargetRef != nil:
-		pt.TargetRef.DeepCopyInto(ref)
-	case pt.Type == redsky.PatchStrategic, pt.Type == "":
-		ref.APIVersion = ptMeta.APIVersion
-		ref.Kind = ptMeta.Kind
-		ref.Name = ptMeta.Name
-	default:
-		return nil, fmt.Errorf("invalid patch and reference combination")
-	}
-
-	if ref.Namespace == "" {
-		ref.Namespace = ptMeta.Namespace
-	}
-
-	// Validate the reference
-	if ref.Name == "" || ref.Kind == "" {
-		return nil, fmt.Errorf("invalid patch reference")
-	}
-
-	return ref, nil
 }
 
 func createPatchTarget(patchType types.PatchType, patchBytes []byte, targetRef *corev1.ObjectReference, trialNS string) (*metav1.PartialObjectMetadata, error) {
