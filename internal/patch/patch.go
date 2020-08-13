@@ -41,6 +41,8 @@ func (p *Patcher) CreatePatchOperation(t *redsky.Trial, pt *redsky.PatchTemplate
 		return nil, err
 	}
 
+	// TODO: Revisit this after the partial object meta chage in v1beta1
+
 	patchTarget, err := createPatchTarget(patchType, patchBytes, pt.TargetRef, t.Namespace)
 	if err != nil {
 		return nil, err
