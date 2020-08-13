@@ -20,12 +20,28 @@ func Test(t *testing.T) {
 		},
 	}
 
-	patch := `spec:
+	patchMeta := `apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp
+  namespace: default`
+
+	patchSpec := `spec:
         template:
           spec:
             containers:
             - name: postgres
               imagePullPolicy: Always`
+
+	fullPatch := patchMeta + "\n" + patchSpec
+
+	jsonPatch := `[
+    {
+     "op": "replace",
+     "path": "/spec/template/spec/containers/0/imagePullPolicy",
+		 "value": "Always"
+    },
+  ]`
 
 	testCases := []struct {
 		desc          string
@@ -37,9 +53,10 @@ func Test(t *testing.T) {
 			desc:  "default",
 			trial: trial,
 			patchTemplate: &redsky.PatchTemplate{
-				// Note, defining an empty string ("") results
-				// in a `null` being returned
-				Patch: patch,
+				// Note: defining an empty string ("") results
+				// in a `null` being returned. Think this is valid
+				// but makes testing a little more complicated.
+				Patch: fullPatch,
 				TargetRef: &corev1.ObjectReference{
 					Kind:       "Deployment",
 					APIVersion: "apps/v1",
@@ -52,22 +69,27 @@ func Test(t *testing.T) {
 			desc:  "strategic w/o targetref",
 			trial: trial,
 			patchTemplate: &redsky.PatchTemplate{
-				Type: redsky.PatchStrategic,
-				// Note, defining an empty string ("") results
-				// in a `null` being returned
-				Patch: patch,
-				// nil panic
+				Type:      redsky.PatchStrategic,
+				Patch:     fullPatch,
 				TargetRef: nil,
 			},
+		},
+		{
+			desc:  "strategic w/o targetref w/o full",
+			trial: trial,
+			patchTemplate: &redsky.PatchTemplate{
+				Type:      redsky.PatchStrategic,
+				Patch:     patchSpec,
+				TargetRef: nil,
+			},
+			expectedError: true,
 		},
 		{
 			desc:  "patchmerge",
 			trial: trial,
 			patchTemplate: &redsky.PatchTemplate{
-				Type: redsky.PatchMerge,
-				// Note, defining an empty string ("") results
-				// in a `null` being returned
-				Patch: patch,
+				Type:  redsky.PatchMerge,
+				Patch: fullPatch,
 				TargetRef: &corev1.ObjectReference{
 					Kind:       "Deployment",
 					APIVersion: "apps/v1",
@@ -80,10 +102,8 @@ func Test(t *testing.T) {
 			desc:  "patchjson",
 			trial: trial,
 			patchTemplate: &redsky.PatchTemplate{
-				Type: redsky.PatchJSON,
-				// Note, defining an empty string ("") results
-				// in a `null` being returned
-				Patch: patch,
+				Type:  redsky.PatchJSON,
+				Patch: jsonPatch,
 				TargetRef: &corev1.ObjectReference{
 					Kind:       "Deployment",
 					APIVersion: "apps/v1",

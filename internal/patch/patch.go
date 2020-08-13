@@ -3,11 +3,9 @@ package patch
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 
 	redsky "github.com/redskyops/redskyops-controller/api/v1beta1"
 	"github.com/redskyops/redskyops-controller/internal/template"
-	"github.com/redskyops/redskyops-controller/internal/trial"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
@@ -36,31 +34,23 @@ func (p *Patcher) CreatePatchOperation(t *redsky.Trial, pt *redsky.PatchTemplate
 	default:
 		return nil, fmt.Errorf("unknown patch type: %s", pt.Type)
 	}
-	fmt.Println("got patch type")
 
+	// Create rendered patch
 	patchBytes, err := p.Engine.RenderPatch(pt, t)
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println("got patch bytes")
 
-	ptMeta := &metav1.PartialObjectMetadata{}
-	if err = json.Unmarshal(patchBytes, ptMeta); err != nil {
+	patchTarget, err := createPatchTarget(patchType, patchBytes, pt.TargetRef, t.Namespace)
+	if err != nil {
 		return nil, err
 	}
-	fmt.Println("got ptMeta")
 
-	// Default the namespace to the trial namespace
-	if ptMeta.Namespace == "" {
-		ptMeta.Namespace = t.Namespace
-	}
-
-	objRef, err := getObjectRefFromPatchTemplate(ptMeta, pt)
+	objRef, err := getObjectRefFromPatchTemplate(patchTarget, pt)
 	if err != nil {
 		fmt.Println(err)
 		return nil, err
 	}
-	fmt.Println("got ObjRef")
 
 	patchOp = &redsky.PatchOperation{
 		TargetRef:         *objRef,
@@ -72,102 +62,18 @@ func (p *Patcher) CreatePatchOperation(t *redsky.Trial, pt *redsky.PatchTemplate
 	return patchOp, nil
 }
 
-// TODO: Remove as things migrate to Patcher
-// RenderTemplate determines the patch target and renders the patch template
-func RenderTemplate(te *template.Engine, t *redsky.Trial, p *redsky.PatchTemplate) (*corev1.ObjectReference, []byte, error) {
-	// Render the actual patch data
-	data, err := te.RenderPatch(p, t)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	// Determine the reference, possibly extracting it from the rendered data
-	ref := &corev1.ObjectReference{}
-	switch {
-	case p.TargetRef != nil:
-		log.Println("targetref != nil")
-		p.TargetRef.DeepCopyInto(ref)
-	case p.Type == redsky.PatchStrategic, p.Type == "":
-		m := &struct {
-			metav1.TypeMeta   `json:",inline"`
-			metav1.ObjectMeta `json:"metadata,omitempty"`
-		}{}
-		if err := json.Unmarshal(data, m); err == nil {
-			ref.APIVersion = m.APIVersion
-			ref.Kind = m.Kind
-			ref.Name = m.Name
-			ref.Namespace = m.Namespace
-		}
-	}
-
-	// Default the namespace to the trial namespace
-	if ref.Namespace == "" {
-		ref.Namespace = t.Namespace
-	}
-
-	// Validate the reference
-	if ref.Name == "" || ref.Kind == "" {
-		return nil, nil, fmt.Errorf("invalid patch reference")
-	}
-
-	return ref, data, nil
-}
-
-// TODO: Remove as things migrate to Patcher
-// createPatchOperation creates a new patch operation from a patch template and it's (fully rendered) patch data
-func CreatePatchOperation(t *redsky.Trial, p *redsky.PatchTemplate, ref *corev1.ObjectReference, data []byte) (*redsky.PatchOperation, error) {
-	po := &redsky.PatchOperation{
-		TargetRef:         *ref,
-		Data:              data,
-		AttemptsRemaining: 3,
-	}
-
-	// If the patch is effectively null, we do not need to evaluate it
-	if len(po.Data) == 0 || string(po.Data) == "null" {
-		return nil, nil
-	}
-
-	// Determine the patch type
-	switch p.Type {
-	case redsky.PatchStrategic, "":
-		po.PatchType = types.StrategicMergePatchType
-	case redsky.PatchMerge:
-		po.PatchType = types.MergePatchType
-	case redsky.PatchJSON:
-		po.PatchType = types.JSONPatchType
-	default:
-		return nil, fmt.Errorf("unknown patch type: %s", p.Type)
-	}
-
-	// TODO: probably should move this to the controller
-	// If the patch is for the trial job itself, it cannot be applied (since the job won't exist until well after patches are applied)
-	if trial.IsTrialJobReference(t, &po.TargetRef) {
-		po.AttemptsRemaining = 0
-		if po.PatchType != types.StrategicMergePatchType {
-			return nil, fmt.Errorf("trial job patch must be a strategic merge patch")
-		}
-	}
-
-	return po, nil
-}
-
 // getObjectRefFromPatchTemplate constructs an corev1.ObjectReference from a patch template.
 func getObjectRefFromPatchTemplate(ptMeta *metav1.PartialObjectMetadata, pt *redsky.PatchTemplate) (ref *corev1.ObjectReference, err error) {
 	// Determine the reference, possibly extracting it from the rendered data
 	ref = &corev1.ObjectReference{}
 
-	fmt.Println("getting obj ref")
 	switch {
 	case pt.TargetRef != nil:
-		fmt.Println("targetref != nil")
 		pt.TargetRef.DeepCopyInto(ref)
 	case pt.Type == redsky.PatchStrategic, pt.Type == "":
-		fmt.Println("strategic, targetref = nil")
 		ref.APIVersion = ptMeta.APIVersion
 		ref.Kind = ptMeta.Kind
 		ref.Name = ptMeta.Name
-		log.Println(ptMeta)
-		fmt.Println(ref)
 	default:
 		return nil, fmt.Errorf("invalid patch and reference combination")
 	}
@@ -182,4 +88,62 @@ func getObjectRefFromPatchTemplate(ptMeta *metav1.PartialObjectMetadata, pt *red
 	}
 
 	return ref, nil
+}
+
+func createPatchTarget(patchType types.PatchType, patchBytes []byte, targetRef *corev1.ObjectReference, trialNS string) (*metav1.PartialObjectMetadata, error) {
+	// We'll honor targetRef as first priority
+	// and fall back to trying to parse the targetRef
+	// from the patch bytes in the case of a StrategicMergePatch.
+	if targetRef == nil {
+		if patchType != types.StrategicMergePatchType {
+			return nil, fmt.Errorf("a target ref must be specified for the patch")
+		}
+
+		targetRef = &corev1.ObjectReference{}
+	}
+
+	// Create patch target
+	ptMeta := &metav1.PartialObjectMetadata{}
+	ptMeta.APIVersion = targetRef.APIVersion
+	ptMeta.Kind = targetRef.Kind
+	ptMeta.Name = targetRef.Name
+
+	ptMeta.Namespace = targetRef.Namespace
+	if ptMeta.Namespace == "" {
+		ptMeta.Namespace = trialNS
+	}
+
+	var err error
+	if err = validatePOM(ptMeta); err == nil {
+		return ptMeta, nil
+	}
+
+	if err != nil && patchType != types.StrategicMergePatchType {
+		return nil, err
+	}
+
+	if err = json.Unmarshal(patchBytes, ptMeta); err != nil {
+		return nil, err
+	}
+
+	if err = validatePOM(ptMeta); err != nil {
+		return nil, err
+	}
+
+	return ptMeta, nil
+}
+
+func validatePOM(ptMeta *metav1.PartialObjectMetadata) (err error) {
+	// Verify we have a valid patch target
+	switch {
+	case ptMeta.Name == "":
+		err = fmt.Errorf("unable to identify patch target")
+	case ptMeta.APIVersion == "":
+		err = fmt.Errorf("unable to identify patch target")
+	case ptMeta.Name == "":
+		err = fmt.Errorf("unable to identify patch target")
+	case ptMeta.Namespace == "":
+	}
+
+	return err
 }
