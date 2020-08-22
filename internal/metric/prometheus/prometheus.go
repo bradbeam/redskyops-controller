@@ -31,12 +31,13 @@ import (
 // PrometheusCollector implements the Source interface and contains all of the
 // necessary metadata to query a prometheus endpoint.
 type PrometheusCollector struct {
-	api         promv1.API
-	name        string
-	resultQuery string
-	errorQuery  string
-	startTime   time.Time
-	endTime     time.Time
+	api  promv1.API
+	name string
+	// this name sucks but i cant think of a more appropriate one right now
+	resultQuery    string
+	errorQuery     string
+	startTime      time.Time
+	completionTime time.Time
 }
 
 func NewCollector(url, name, query, errorQuery string, startTime, endTime time.Time) (*PrometheusCollector, error) {
@@ -47,52 +48,27 @@ func NewCollector(url, name, query, errorQuery string, startTime, endTime time.T
 	}
 
 	return &PrometheusCollector{
-		api:         promv1.NewAPI(c),
-		name:        name,
-		resultQuery: query,
-		errorQuery:  errorQuery,
-		startTime:   startTime,
-		endTime:     endTime,
+		api:            promv1.NewAPI(c),
+		name:           name,
+		resultQuery:    query,
+		errorQuery:     errorQuery,
+		startTime:      startTime,
+		completionTime: endTime,
 	}, nil
 }
 
-// This is mostly the same.. I started getting a bit carried away with refactoring because I was
-// finally in front of a computer, but it should be equivalent
-func (p *PrometheusCollector) Capture(ctx context.Context) (queryRes float64, errQueryRes float64, err error) {
-	if !p.ready(ctx) {
-		// We do run into an importing issue (cyclical) with trying to have well defined errors being used here.
-		// To address the import issues
-		//   - We could move this to a `internal/errors` but I'm unsure how I feel about a large errors package;
-		//		 feels appropraite to be locally scoped here
-		//   - We could drop CaptureError altogether and instead keep retrying within the collector since retries
-		//     do not impact the remaining attempts. This would simplify the error type we return ( just a regular error )
-		//     and prevent another reconcile loop.
-
-		// TODO Can we make a more informed delay?
-		return queryRes, errQueryRes, &CaptureError{RetryAfter: 5 * time.Second}
-	}
-
-	queryRes, err = p.query(ctx, p.resultQuery)
-	if err != nil {
-		return queryRes, errQueryRes, err
-	}
-
-	if p.errorQuery != "" {
-		errQueryRes, err = p.query(ctx, p.errorQuery)
-		if err != nil {
-			return queryRes, errQueryRes, err
-		}
-
-	}
-
-	return queryRes, errQueryRes, nil
+// Tried to leave as much of the original in place to reduce the changes for discussion since it's not super
+// relevant right now. I did get carried away on the commit before this, so I added this second commit to keep
+// things straight and not lose out on the previous work :D
+func (p *PrometheusCollector) Capture(ctx context.Context) (value float64, stddev float64, err error) {
+	return p.captureOnePrometheusMetric(ctx)
 }
 
-func (p *PrometheusCollector) ready(ctx context.Context) bool {
+func (p *PrometheusCollector) captureOnePrometheusMetric(ctx context.Context) (float64, float64, error) {
 	// Make sure Prometheus is ready
 	targets, err := p.api.Targets(ctx)
 	if err != nil {
-		return false
+		return 0, 0, err
 	}
 
 	for _, target := range targets.Active {
@@ -100,35 +76,57 @@ func (p *PrometheusCollector) ready(ctx context.Context) bool {
 			continue
 		}
 
-		if target.LastScrape.Before(p.endTime) {
-			return false
+		if target.LastScrape.Before(p.completionTime) {
+			// We do run into an importing issue (cyclical) with trying to have well defined errors being used here.
+			// To address the import issues
+			//   - We could move this to a `internal/errors` but I'm unsure how I feel about a large errors package;
+			//		 feels appropraite to be locally scoped here
+			//   - We could drop CaptureError altogether. CaptureError.RetryAfter is used to signal the controller to requeue
+			//     which we could instead handle here considering this portion of the CaptureError does not impact the
+			//     remaining attempts. This would simplify the error type we return ( just a regular error )
+			//     and prevent another reconcile loop.
+
+			// TODO Can we make a more informed delay?
+			return 0, 0, &CaptureError{RetryAfter: 5 * time.Second}
 		}
 	}
 
-	return true
-}
-
-func (p *PrometheusCollector) query(ctx context.Context, query string) (res float64, err error) {
 	// Execute query
-	v, _, err := p.api.Query(ctx, query, p.endTime)
+	v, _, err := p.api.Query(ctx, p.resultQuery, p.completionTime)
 	if err != nil {
-		return res, err
+		return 0, 0, err
 	}
 
 	// Only accept scalar results
 	if v.Type() != model.ValScalar {
-		return res, fmt.Errorf("expected scalar query result, got %s", v.Type())
+		return 0, 0, fmt.Errorf("expected scalar query result, got %s", v.Type())
 	}
 
 	// Scalar result
 	result := float64(v.(*model.Scalar).Value)
 	if math.IsNaN(result) {
-		err := &CaptureError{Message: "metric data not available", Address: address, Query: query, CompletionTime: completionTime}
-		if strings.HasPrefix(query, "scalar(") {
+		err := &CaptureError{Message: "metric data not available", Address: "", Query: p.resultQuery, CompletionTime: p.completionTime}
+		if strings.HasPrefix(p.resultQuery, "scalar(") {
 			err.Message += " (the scalar function may have received an input vector whose size is not 1)"
 		}
-		return res, err
+		return 0, 0, err
 	}
 
-	return res, err
+	// Execute the error query (if configured)
+	var errorResult float64
+	if p.errorQuery != "" {
+		ev, _, err := p.api.Query(ctx, p.errorQuery, p.completionTime)
+		if err != nil {
+			return 0, 0, err
+		}
+		if ev.Type() != model.ValScalar {
+			return 0, 0, fmt.Errorf("expected scalar error query result, got %s", v.Type())
+		}
+		errorResult = float64(v.(*model.Scalar).Value)
+		if math.IsNaN(errorResult) {
+			errorResult = 0
+		}
+	}
+
+	return result, errorResult, nil
 }
