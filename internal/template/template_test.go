@@ -156,14 +156,14 @@ func TestEngine(t *testing.T) {
 				got     string
 			)
 
-			switch tc.input.(type) {
+			switch inputType := tc.input.(type) {
 			case *redskyv1beta1.PatchTemplate:
-				boutput, err = eng.RenderPatch(tc.input.(*redskyv1beta1.PatchTemplate), tc.trial)
+				boutput, err = eng.RenderPatch(inputType, tc.trial)
 				got = string(boutput)
 			case *redskyv1beta1.HelmValue:
-				got, err = eng.RenderHelmValue(tc.input.(*redskyv1beta1.HelmValue), tc.trial)
+				got, err = eng.RenderHelmValue(inputType, tc.trial)
 			case *redskyv1beta1.Metric:
-				got, _, err = eng.RenderMetricQueries(tc.input.(*redskyv1beta1.Metric), tc.trial, tc.obj)
+				got, _, err = eng.RenderMetricQueries(inputType, tc.trial, tc.obj)
 			}
 			assert.NoError(t, err)
 			assert.Equal(t, tc.expected, got)

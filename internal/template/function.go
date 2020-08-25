@@ -60,7 +60,7 @@ func percent(value int64, percent int64) string {
 }
 
 // resourceRequests uses a map of resource types to weights to calculate a weighted sum of the resource requests
-func resourceRequests(pods corev1.PodList, weights string) (float64, error) {
+func resourceRequests(pods *corev1.PodList, weights string) (float64, error) {
 	var totalResources float64
 	parsedWeights := make(map[string]float64)
 
@@ -68,13 +68,15 @@ func resourceRequests(pods corev1.PodList, weights string) (float64, error) {
 		parsedEntry := strings.Split(singleEntry, "=")
 		weight, err := strconv.ParseFloat(parsedEntry[1], 64)
 		if err != nil {
-			return 0.0, fmt.Errorf("unable to parse weight for %s", parsedEntry[0])
+			return 0, fmt.Errorf("unable to parse weight for %s", parsedEntry[0])
 		}
 		parsedWeights[parsedEntry[0]] = weight
 	}
-	for _, pod := range pods.Items {
-		for _, container := range pod.Spec.Containers {
+
+	for pidx := range pods.Items {
+		for cidx := range pods.Items[pidx].Spec.Containers {
 			for resourceType, weight := range parsedWeights {
+				container := pods.Items[pidx].Spec.Containers[cidx]
 				resourceValue := container.Resources.Requests[corev1.ResourceName(resourceType)]
 				totalResources += weight * float64(resourceValue.MilliValue())
 			}
