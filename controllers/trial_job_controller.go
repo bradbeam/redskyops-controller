@@ -170,7 +170,7 @@ func (r *TrialJobReconciler) listJobs(ctx context.Context, jobList *batchv1.JobL
 	return nil
 }
 
-func (r *TrialJobReconciler) applyJobStatus(ctx context.Context, t *redskyv1beta1.Trial, job *batchv1.Job, time *metav1.Time) (bool, bool) {
+func (r *TrialJobReconciler) applyJobStatus(ctx context.Context, t *redskyv1beta1.Trial, job *batchv1.Job, metaTime *metav1.Time) (bool, bool) {
 	var dirty bool
 
 	// Get the interval of the container execution in the job pods
@@ -183,13 +183,13 @@ func (r *TrialJobReconciler) applyJobStatus(ctx context.Context, t *redskyv1beta
 			for i := range podList.Items {
 				s := &podList.Items[i].Status
 				if s.Phase == corev1.PodFailed {
-					trial.ApplyCondition(&t.Status, redskyv1beta1.TrialFailed, corev1.ConditionTrue, s.Reason, "", time)
+					trial.ApplyCondition(&t.Status, redskyv1beta1.TrialFailed, corev1.ConditionTrue, s.Reason, "", metaTime)
 					dirty = true
 				}
 				// TODO We should consolidate this with `internal/ready/podFailed`
 				for _, c := range s.Conditions {
 					if c.Type == corev1.PodScheduled && c.Status == corev1.ConditionFalse && c.Reason == corev1.PodReasonUnschedulable {
-						trial.ApplyCondition(&t.Status, redskyv1beta1.TrialFailed, corev1.ConditionTrue, c.Reason, c.Message, time)
+						trial.ApplyCondition(&t.Status, redskyv1beta1.TrialFailed, corev1.ConditionTrue, c.Reason, c.Message, metaTime)
 						dirty = true
 					}
 				}
@@ -218,7 +218,7 @@ func (r *TrialJobReconciler) applyJobStatus(ctx context.Context, t *redskyv1beta
 	// Mark the trial as failed if the job itself failed
 	for _, c := range job.Status.Conditions {
 		if c.Type == batchv1.JobFailed && c.Status == corev1.ConditionTrue {
-			trial.ApplyCondition(&t.Status, redskyv1beta1.TrialFailed, corev1.ConditionTrue, c.Reason, c.Message, time)
+			trial.ApplyCondition(&t.Status, redskyv1beta1.TrialFailed, corev1.ConditionTrue, c.Reason, c.Message, metaTime)
 			dirty = true
 		}
 	}

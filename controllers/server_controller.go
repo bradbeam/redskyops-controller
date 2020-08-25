@@ -201,7 +201,7 @@ func (r *ServerReconciler) createExperiment(ctx context.Context, log logr.Logger
 	}
 
 	// Check that the server and the cluster have a compatible experiment definition
-	if err := validation.CheckDefinition(exp, &ee); err != nil {
+	if err = validation.CheckDefinition(exp, &ee); err != nil {
 		return &ctrl.Result{}, err
 	}
 
@@ -265,7 +265,7 @@ func (r *ServerReconciler) nextTrial(ctx context.Context, log logr.Logger, exp *
 	suggestion, err := r.ExperimentsAPI.NextTrial(ctx, exp.GetAnnotations()[redskyv1beta1.AnnotationNextTrialURL])
 	if err != nil {
 		if server.StopExperiment(exp, err) {
-			err := r.Update(ctx, exp)
+			err = r.Update(ctx, exp)
 			return controller.RequeueConflict(err)
 		}
 		return controller.RequeueIfUnavailable(err)

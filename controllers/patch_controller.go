@@ -151,9 +151,7 @@ func (r *PatchReconciler) evaluatePatchOperations(ctx context.Context, t *redsky
 		}
 
 		// Add a readiness check if necessary
-		if rc, err := r.createReadinessCheck(t, p, ref); err != nil {
-			return &ctrl.Result{}, err
-		} else if rc != nil {
+		if rc := r.createReadinessCheck(t, p, ref); rc != nil {
 			t.Status.ReadinessChecks = append(t.Status.ReadinessChecks, *rc)
 		}
 	}
@@ -209,10 +207,10 @@ func (r *PatchReconciler) applyPatches(ctx context.Context, t *redskyv1beta1.Tri
 }
 
 // createReadinessCheck creates a readiness check for a patch operation
-func (r *PatchReconciler) createReadinessCheck(t *redskyv1beta1.Trial, p *redskyv1beta1.PatchTemplate, ref *corev1.ObjectReference) (*redskyv1beta1.ReadinessCheck, error) {
+func (r *PatchReconciler) createReadinessCheck(t *redskyv1beta1.Trial, p *redskyv1beta1.PatchTemplate, ref *corev1.ObjectReference) *redskyv1beta1.ReadinessCheck {
 	// Do not create a readiness check on the trial job
 	if trial.IsTrialJobReference(t, ref) {
-		return nil, nil
+		return nil
 	}
 
 	// NOTE: There is a cardinality mismatch between the `PatchReadinessGate` type and the `ReadinessCheck` type in
@@ -238,7 +236,7 @@ func (r *PatchReconciler) createReadinessCheck(t *redskyv1beta1.Trial, p *redsky
 
 	// If there are no conditions to check, we do not need to add a readiness check
 	if len(rc.ConditionTypes) == 0 {
-		return nil, nil
+		return nil
 	}
-	return rc, nil
+	return rc
 }

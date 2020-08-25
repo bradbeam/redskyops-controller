@@ -198,15 +198,17 @@ func (r *SetupReconciler) createSetupJob(ctx context.Context, t *redskyv1beta1.T
 		if err != nil {
 			return &ctrl.Result{}, err
 		}
-		if err := controllerutil.SetControllerReference(t, job, r.Scheme); err != nil {
+
+		if err = controllerutil.SetControllerReference(t, job, r.Scheme); err != nil {
 			return &ctrl.Result{}, err
 		}
+
 		err = r.Create(ctx, job)
 
 		// Forbidden for a delete job indicates that namespace was probably deleted
 		if apierrs.IsForbidden(err) && mode == setup.ModeDelete {
 			trial.ApplyCondition(&t.Status, redskyv1beta1.TrialSetupDeleted, corev1.ConditionTrue, "Forbidden", err.Error(), probeTime)
-			err := r.Update(ctx, t)
+			err = r.Update(ctx, t)
 			return controller.RequeueConflict(err)
 		}
 
