@@ -20,6 +20,7 @@ import (
 	"bytes"
 	"fmt"
 	"math"
+	"strings"
 	"text/template"
 	"time"
 
@@ -153,6 +154,18 @@ func (e *Engine) render(name, text string, data interface{}) (*bytes.Buffer, err
 	b := &bytes.Buffer{}
 	if err = tmpl.Execute(b, data); err != nil {
 		return nil, err
+	}
+
+	if strings.Contains(b.String(), "{{") {
+		tmpl, err := template.New(name).Funcs(e.FuncMap).Parse(b.String())
+		if err != nil {
+			return nil, err
+		}
+
+		b = &bytes.Buffer{}
+		if err = tmpl.Execute(b, data); err != nil {
+			return nil, err
+		}
 	}
 	return b, nil
 }

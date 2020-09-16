@@ -90,42 +90,51 @@ func cpuUtilization(labelArgs ...string) (string, error) {
 	cpuUtilizationQueryTemplate := `
 scalar(
   sum(
-    max(container_cpu_usage_seconds_total{container="", image=""}) by (pod)
+    increase(container_cpu_usage_seconds_total{container="", image=""}[{{ .DurationStr }}s]) by (pod)
     *
-    on (pod) group_left kube_pod_labels{{ . }}
+    on (pod) group_left kube_pod_labels{{ .Labels }}
   )
   /
   sum(
-    sum_over_time(kube_pod_container_resource_limits_cpu_cores[1h:1s])
+    sum_over_time(kube_pod_container_resource_limits_cpu_cores[{{ .DurationStr }}s:1s])
     *
-    on (pod) group_left kube_pod_labels{{ . }}
+    on (pod) group_left kube_pod_labels{{ .Labels }}
   )
 )`
 
-	tmpl, err := template.New("query").Parse(cpuUtilizationQueryTemplate)
-	if err != nil {
-		return "", err
-	}
+	tmpl := template.Must(template.New("query").Parse(cpuUtilizationQueryTemplate))
 
 	var labels []string
 	for _, label := range strings.Split(strings.Join(labelArgs, ","), ",") {
+		if label == "" {
+			continue
+		}
+
 		kvpair := strings.Split(label, "=")
 		if len(kvpair) != 2 {
-			// Should we continue or hard fail on invalid labels?
-			continue
+			return "", fmt.Errorf("invalid label for `cpuUtilization`, expected key=value, got: %s", label)
 		}
 
 		labels = append(labels, fmt.Sprintf("label_%s=\"%s\"", kvpair[0], kvpair[1]))
 	}
 
 	var labelParam string
-	// if 0 labels, should we inject namespace=.Trial.Namespace automatically?
 	if len(labels) > 0 {
 		labelParam = fmt.Sprintf("{%s}", strings.Join(labels, ","))
+	} else {
+		labelParam = fmt.Sprint("{namespace=\"{{ .Trial.Namespace }}\"}")
+	}
+
+	input := struct {
+		Labels      string
+		DurationStr string
+	}{
+		labelParam,
+		"{{ duration .StartTime .CompletionTime }}",
 	}
 
 	var output bytes.Buffer
-	if err = tmpl.Execute(&output, labelParam); err != nil {
+	if err := tmpl.Execute(&output, input); err != nil {
 		return "", err
 	}
 
