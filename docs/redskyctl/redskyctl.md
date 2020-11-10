@@ -26,6 +26,7 @@ Kubernetes Exploration
 * [redskyctl kustomize](redskyctl_kustomize.md)	 - Kustomize integrations
 * [redskyctl label](redskyctl_label.md)	 - Label a Red Sky resource
 * [redskyctl login](redskyctl_login.md)	 - Authenticate
+* [redskyctl patch](redskyctl_patch.md)	 - Create a patched manifest using trial parameters
 * [redskyctl ping](redskyctl_ping.md)	 - Ping the Red Sky API
 * [redskyctl reset](redskyctl_reset.md)	 - Uninstall from a cluster
 * [redskyctl results](redskyctl_results.md)	 - Serve a visualization of the results
