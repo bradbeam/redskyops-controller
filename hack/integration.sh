@@ -12,6 +12,12 @@ echo "Init redskyops"
 ${REDSKYCTL_BIN} init
 
 echo "Wait for controller"
+# TODO
+## This can fail if the resource does not exist yet because we have all the Ghz
+## + ./redskyctl-bin check controller --wait
+## error: no matching resources found
+## Error: exit status 1
+sleep 5
 ${REDSKYCTL_BIN} check controller --wait
 
 echo "Create nginx deployment"
@@ -33,6 +39,7 @@ kubectl get trial -o wide
 Stats() {
 	kubectl get po -o wide
   kubectl get trial -o wide
+  kubectl logs -n redsky-system -l control-plane=controller-manager
 }
 
 trap Stats EXIT
