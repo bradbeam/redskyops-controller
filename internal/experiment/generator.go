@@ -103,11 +103,16 @@ func (g *Generator) SetDefaultSelectors() {
 
 // Execute the experiment generation pipeline, sending the results to the supplied writer.
 func (g *Generator) Execute(output kio.Writer) error {
+
 	return kio.Pipeline{
 		Inputs: []kio.Reader{
 			g.Application.Resources,
 		},
 		Filters: []kio.Filter{
+			// TODO
+			// This can silently fail
+			// when commented out, `ingress must be configured when using Locust scenarios`
+			// when present we get an empty app
 			&konjure.Filter{
 				Depth:         100,
 				DefaultReader: g.DefaultReader,
