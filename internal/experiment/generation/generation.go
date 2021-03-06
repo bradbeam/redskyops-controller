@@ -97,10 +97,16 @@ func loadApplicationData(app *redskyappsv1alpha1.Application, src string) ([]byt
 
 	opts := []getter.ClientOption{
 		func(c *getter.Client) error {
+			// Use current working directory as client pwd
+			if pwd, err := os.Getwd(); err == nil {
+				c.Pwd = pwd
+			}
+
 			// Try to load relative to the application definition itself
 			if path := app.Annotations["config.kubernetes.io/path"]; path != "" {
 				c.Pwd = filepath.Dir(path)
 			}
+
 			return nil
 		},
 	}
